@@ -16,6 +16,11 @@ export default function TenantActions() {
       { label: '🛍️ Shop Products', action: () => alert('Mango shop') },
       { label: '📦 Orders', action: () => alert('Mango orders') },
       { label: '👥 Customers', action: () => alert('Mango customers') }
+    ],
+    wordcell: [
+      { label: '✍️ New Post', action: () => alert('Wordcell new post') },
+      { label: '📚 Library', action: () => alert('Wordcell library') },
+      { label: '📝 Drafts', action: () => alert('Wordcell drafts') }
     ]
   };
 

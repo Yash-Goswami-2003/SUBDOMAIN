@@ -118,6 +118,12 @@ export default function TenantPage({ params }) {
       color: "orange",
       description: "The Mango tenant site",
       logo: "🥭"
+    },
+    wordcell: {
+      name: "Wordcell",
+      color: "#8e44ad", 
+      description: "The Wordcell tenant site",
+      logo: "📝"
     }
   };
 
