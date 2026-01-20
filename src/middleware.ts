@@ -21,11 +21,14 @@ export function middleware(req) {
 
   // Case 1: Vercel preview deployment with prefix
   // Example: parlet-app.vercel.app → tenant = "parlet"
+  // Also handles: parlet-subdomain-pi-five.vercel.app → tenant = "parlet"
   if (hostname.includes(".vercel.app")) {
     const [prefix] = parts;
-    // Extract tenant from prefix (e.g., "parlet-app" → "parlet")
+    // Extract tenant from prefix (before first hyphen only)
     if (prefix && prefix.includes("-")) {
       tenant = prefix.split("-")[0];
+    } else {
+      tenant = prefix;  // No hyphen, entire prefix is the tenant
     }
   }
   // Case 2: True subdomains (localhost or custom domain)
