@@ -88,9 +88,9 @@ export default function HeroSection({ data }) {
         <div className="max-w-5xl w-full">
           {/* Floating Badge */}
           <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-400/30 backdrop-blur-md">
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              <span className="text-sm text-blue-300 font-medium">Welcome to my portfolio</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-800/50 border border-gray-600/50 backdrop-blur-md">
+              <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse" />
+              <span className="text-sm text-gray-300 font-medium">This is only a test website. </span>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export default function HeroSection({ data }) {
           <div className="text-center space-y-6">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
               <span className="block text-white">Hi, I'm</span>
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 bg-clip-text text-transparent">
                 {data.name}
               </span>
             </h1>
@@ -123,7 +123,7 @@ export default function HeroSection({ data }) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
             <button className="group relative px-8 py-3 rounded-lg font-semibold overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-100 group-hover:opacity-110 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-700 to-gray-800 opacity-100 group-hover:opacity-110 transition-opacity" />
               <span className="relative flex items-center gap-2 text-white">
                 Explore My Work
                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ export default function HeroSection({ data }) {
                 </svg>
               </span>
             </button>
-            <button className="px-8 py-3 rounded-lg font-semibold border border-blue-400/50 text-blue-300 hover:bg-blue-500/10 transition-colors">
+            <button className="px-8 py-3 rounded-lg font-semibold border border-gray-600 text-gray-300 hover:bg-gray-700/50 transition-colors">
               Get In Touch
             </button>
           </div>

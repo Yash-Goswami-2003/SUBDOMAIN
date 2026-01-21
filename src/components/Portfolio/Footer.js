@@ -61,10 +61,10 @@ export default function Footer() {
                 key={social.name}
                 href="#"
                 title={social.name}
-                className="group relative w-10 h-10 rounded-lg bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-blue-500/50 flex items-center justify-center transition-all duration-300"
+                className="group relative w-10 h-10 rounded-lg bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-gray-500/50 flex items-center justify-center transition-all duration-300"
               >
                 <svg
-                  className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors"
+                  className="w-5 h-5 text-gray-400 group-hover:text-gray-200 transition-colors"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -76,7 +76,8 @@ export default function Footer() {
 
           <div className="text-center sm:text-right text-gray-500 text-xs">
             <p>© {currentYear} Yash Goswami. All rights reserved.</p>
-            <p className="mt-1">Built with <span className="text-red-400">♥</span> using Next.js & React</p>
+            <p className="mt-1">Built with <span className="text-gray-400">♥</span> using Next.js & React</p>
+            <p className="mt-2 text-gray-600 italic">This is a test website.</p>
           </div>
         </div>
       </div>
