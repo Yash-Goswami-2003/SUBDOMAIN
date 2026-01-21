@@ -26,82 +26,104 @@ export default function ExperienceTimeline({ experiences }) {
   }, [])
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-900 to-slate-800 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
-
-      <div className="max-w-4xl mx-auto relative z-10">
+    <section className="container" style={{ py: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Section Header */}
-        <div className="mb-20">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 0a2 2 0 100 4m0-4a2 2 0 110 4m-6 0a2 2 0 100 4m0-4a2 2 0 110 4" />
+        <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+          <div className="flex" style={{ alignItems: 'center', marginBottom: 'var(--spacing-sm)' }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--color-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-bg)'
+            }}>
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 0a2 2 0 100 4m0-4a2 2 0 110 4" />
               </svg>
             </div>
-            <h2 className="text-4xl font-bold text-white">Experience</h2>
+            <h2 style={{ fontSize: '2rem', fontWeight: '800' }}>Experience</h2>
           </div>
-          <p className="text-gray-400 text-lg">My professional journey and growth</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>My professional journey and growth</p>
         </div>
 
         {/* Timeline */}
-        <div className="space-y-8">
-          {experiences.map((exp, index) => (
-            <div
-              key={index}
-              ref={(el) => itemsRef.current[index] = el}
-              id={`experience-${index}`}
-              className={`group transition-all duration-700 ${
-                visibleItems[`experience-${index}`]
-                  ? 'opacity-100 translate-x-0'
-                  : 'opacity-0 translate-x-[-2rem]'
-              }`}
-            >
-              {/* Timeline Item */}
-              <div className="relative">
-                {/* Timeline dot and line */}
-                <div className="absolute left-0 top-0 bottom-0 w-8 flex items-start">
-                  <div className="relative z-20">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center border-4 border-slate-800 shadow-lg shadow-gray-500/30 group-hover:shadow-xl group-hover:shadow-gray-400/50 transition-shadow">
-                      <div className="w-3 h-3 rounded-full bg-white" />
-                    </div>
-                  </div>
-                  {index < experiences.length - 1 && (
-                    <div className="absolute top-8 left-1/2 -translate-x-1/2 w-1 h-16 bg-gradient-to-b from-gray-500 via-gray-600 to-transparent" />
-                  )}
+        <div style={{ position: 'relative' }}>
+          {/* Vertical line */}
+          <div style={{
+            position: 'absolute',
+            left: '15px',
+            top: '0',
+            bottom: '0',
+            width: '1px',
+            backgroundColor: 'var(--color-border)',
+            zIndex: 0
+          }} />
+
+          <div style={{ display: 'grid', gap: 'var(--spacing-xl)' }}>
+            {experiences.map((exp, index) => (
+              <div
+                key={index}
+                ref={(el) => itemsRef.current[index] = el}
+                id={`experience-${index}`}
+                style={{
+                  position: 'relative',
+                  paddingLeft: '50px',
+                  opacity: visibleItems[`experience-${index}`] ? 1 : 0,
+                  transform: visibleItems[`experience-${index}`] ? 'translateX(0)' : 'translateX(-20px)',
+                  transition: 'opacity 0.6s ease, transform 0.6s ease',
+                  zIndex: 1
+                }}
+              >
+                {/* Dot */}
+                <div style={{
+                  position: 'absolute',
+                  left: '0',
+                  top: '5px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--color-bg)',
+                  border: '2px solid var(--color-accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2
+                }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-accent)' }} />
                 </div>
 
-                {/* Content Card */}
-                <div className="ml-16 pt-2">
-                  <div className="group relative bg-gradient-to-br from-slate-700/60 to-slate-800/40 rounded-xl p-6 border border-slate-700/50 hover:border-gray-500/50 transition-all duration-300 overflow-hidden">
-                    {/* Hover glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-500/0 via-gray-500/5 to-gray-600/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                    {/* Content */}
-                    <div className="relative z-10">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
-                        <h3 className="text-xl font-bold text-white group-hover:text-gray-300 transition-colors">
-                          {exp.position}
-                        </h3>
-                        <span className="text-sm px-3 py-1 rounded-full bg-gray-700/50 border border-gray-600/50 text-gray-300 font-medium w-fit">
-                          {exp.duration}
-                        </span>
-                      </div>
-
-                      <p className="text-gray-400 font-semibold mb-3">{exp.company}</p>
-
-                      <p className="text-gray-400 text-sm">
-                        {exp.period}
-                      </p>
+                {/* Card */}
+                <div className="card" style={{ padding: 'var(--spacing-md)' }}>
+                  <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 'var(--spacing-sm)' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>{exp.position}</h3>
+                      <div style={{ fontWeight: '600', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{exp.company}</div>
+                    </div>
+                    <div style={{
+                      fontSize: '0.75rem',
+                      padding: 'var(--spacing-xs) var(--spacing-sm)',
+                      backgroundColor: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontWeight: '500'
+                    }}>
+                      {exp.duration}
                     </div>
                   </div>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+                    {exp.period}
+                  </p>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
   )
 }
+

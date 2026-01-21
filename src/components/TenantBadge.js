@@ -6,17 +6,24 @@ export default function TenantBadge() {
   const { tenant, tenantData } = useTenant();
 
   return (
-    <div style={{
-      display: 'inline-block',
-      backgroundColor: tenantData.color || '#999',
-      color: 'white',
-      padding: '4px 12px',
-      borderRadius: '16px',
-      fontSize: '12px',
-      fontWeight: 'bold',
-      whiteSpace: 'nowrap'
+    <div className="badge" style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 'var(--spacing-xs)',
+      backgroundColor: 'var(--color-surface)',
+      color: 'var(--color-text-primary)',
+      padding: 'var(--spacing-xs) var(--spacing-sm)',
+      borderRadius: 'var(--radius-lg)',
+      fontSize: '0.75rem',
+      fontWeight: '600',
+      border: '1px solid var(--color-border)',
+      whiteSpace: 'nowrap',
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em'
     }}>
-      {tenantData.logo} {tenant.toUpperCase()}
+      <span style={{ fontSize: '1rem' }}>{tenantData.logo}</span>
+      {tenant}
     </div>
   );
 }
+

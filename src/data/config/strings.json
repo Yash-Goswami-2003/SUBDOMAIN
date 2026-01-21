@@ -1,0 +1,61 @@
+{
+    "common": {
+        "dashboard": "Dashboard",
+        "settings": "Settings",
+        "loading": "Loading...",
+        "error": "Something went wrong"
+    },
+    "tenants": {
+        "parlet": {
+            "name": "Parlet",
+            "actions": [
+                {
+                    "label": "🎯 View Campaigns",
+                    "key": "view_campaigns"
+                },
+                {
+                    "label": "📊 Analytics",
+                    "key": "analytics"
+                },
+                {
+                    "label": "⚙️ Settings",
+                    "key": "settings"
+                }
+            ]
+        },
+        "mango": {
+            "name": "Mango",
+            "actions": [
+                {
+                    "label": "🛍️ Shop Products",
+                    "key": "shop"
+                },
+                {
+                    "label": "📦 Orders",
+                    "key": "orders"
+                },
+                {
+                    "label": "👥 Customers",
+                    "key": "customers"
+                }
+            ]
+        },
+        "wordcell": {
+            "name": "Wordcell",
+            "actions": [
+                {
+                    "label": "✍️ New Post",
+                    "key": "new_post"
+                },
+                {
+                    "label": "📚 Library",
+                    "key": "library"
+                },
+                {
+                    "label": "📝 Drafts",
+                    "key": "drafts"
+                }
+            ]
+        }
+    }
+}
