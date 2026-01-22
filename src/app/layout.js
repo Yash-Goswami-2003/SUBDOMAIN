@@ -2,12 +2,12 @@ import './globals.css'
 import { Inter, Poppins, Playfair_Display } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
-const poppins = Poppins({ 
+const poppins = Poppins({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
   variable: '--font-poppins'
 })
-const playfair = Playfair_Display({ 
+const playfair = Playfair_Display({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
   variable: '--font-playfair'
@@ -25,11 +25,16 @@ export const metadata = {
   }
 }
 
+import Navbar from '@/components/Navbar'
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} ${playfair.variable}`}>
       <body className={`${inter.className} bg-slate-900 text-white overflow-x-hidden`}>
-        {children}
+        <Navbar />
+        <div style={{ paddingTop: '80px' }}>
+          {children}
+        </div>
       </body>
     </html>
   )

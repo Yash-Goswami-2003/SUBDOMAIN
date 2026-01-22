@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import strings from '@/data/config/strings.json';
 
 export default function HeroSection({ data }) {
@@ -88,7 +89,7 @@ export default function HeroSection({ data }) {
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '800px' }}>
         {/* Floating Badge */}
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-          <div style={{
+          <div className="animate-float" style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: 'var(--spacing-sm)',
@@ -100,13 +101,18 @@ export default function HeroSection({ data }) {
             fontWeight: '600',
             color: 'var(--color-text-secondary)'
           }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-accent)' }} />
-            {strings.common.dashboard} • {data.experience} {data.experienceUnit}s Exp
+            <span className="animate-pulse" style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-accent)'
+            }} />
+            This website is for testing purposes only.
           </div>
         </div>
 
         {/* Main Heading */}
-        <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <div className="animate-fade-in-up" style={{ marginBottom: 'var(--spacing-xl)' }}>
           <h1 style={{
             fontSize: 'clamp(3rem, 10vw, 5rem)',
             fontWeight: '900',
@@ -128,22 +134,30 @@ export default function HeroSection({ data }) {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex" style={{ justifyContent: 'center', marginTop: 'var(--spacing-xl)' }}>
-          <button className="button">
-            View My Portfolio
-          </button>
-          <button className="button" style={{
-            backgroundColor: 'transparent',
-            color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-border)'
-          }}>
-            Contact Me
-          </button>
+        <div className="flex" style={{
+          justifyContent: 'center',
+          marginTop: 'var(--spacing-xl)',
+          animation: 'fadeInUp 0.6s ease 0.3s both'
+        }}>
+          <Link href="/projects" className="button button-magnetic hover-scale">
+            View My Work
+          </Link>
+          <Link
+            href="/contact"
+            className="button hover-scale"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)'
+            }}
+          >
+            Get In Touch
+          </Link>
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <div style={{
+      <div className="animate-float" style={{
         position: 'absolute',
         bottom: 'var(--spacing-xl)',
         left: '50%',
