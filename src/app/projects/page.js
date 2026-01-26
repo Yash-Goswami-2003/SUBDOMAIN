@@ -2,16 +2,31 @@
 
 import { useState } from 'react'
 import Footer from '@/components/Portfolio/Footer'
-import { portfolioData } from '@/data/portfolio'
+import Loader from '@/components/Portfolio/Loader'
+import { useProfileData } from '@/hooks/useProfileData'
 
 export default function Projects() {
+    const { data, loading, error } = useProfileData()
     const [activeFilter, setActiveFilter] = useState('All')
+
+    if (loading) return <Loader />
+
+    if (error) {
+        return (
+            <main className="page-transition" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ color: 'var(--color-error)' }}>Error loading projects data</div>
+                <button onClick={() => window.location.reload()} className="button">Retry</button>
+            </main>
+        )
+    }
+
+    if (!data) return null;
 
     const categories = ['All', 'Full Stack', 'Frontend', 'Backend']
 
     const filteredProjects = activeFilter === 'All'
-        ? portfolioData.projects
-        : portfolioData.projects.filter(p => p.category === activeFilter)
+        ? data.projects
+        : data.projects.filter(p => p.category === activeFilter)
 
     return (
         <main className="page-transition">
@@ -227,7 +242,7 @@ export default function Projects() {
                 )}
             </section>
 
-            <Footer />
+            <Footer data={data} />
         </main>
     )
 }

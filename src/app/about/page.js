@@ -1,9 +1,27 @@
+'use client'
+
 import ExperienceTimeline from '@/components/Portfolio/ExperienceTimeline'
 import SkillsShowcase from '@/components/Portfolio/SkillsShowcase'
 import Footer from '@/components/Portfolio/Footer'
-import { portfolioData } from '@/data/portfolio'
+import Loader from '@/components/Portfolio/Loader'
+import { useProfileData } from '@/hooks/useProfileData'
 
 export default function About() {
+    const { data, loading, error } = useProfileData()
+
+    if (loading) return <Loader />
+
+    if (error) {
+        return (
+            <main className="page-transition" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ color: 'var(--color-error)' }}>Error loading about info</div>
+                <button onClick={() => window.location.reload()} className="button">Retry</button>
+            </main>
+        )
+    }
+
+    if (!data) return null;
+
     return (
         <main className="page-transition">
             {/* About Hero */}
@@ -31,18 +49,18 @@ export default function About() {
                     maxWidth: '700px',
                     lineHeight: '1.7'
                 }}>
-                    {portfolioData.about.story}
+                    {data.about.story}
                 </p>
             </section>
 
             {/* Experience Timeline */}
             <section style={{ padding: 'var(--spacing-xl) 0' }}>
-                <ExperienceTimeline experiences={portfolioData.experienceDetails} />
+                <ExperienceTimeline experiences={data.experienceDetails} />
             </section>
 
             {/* Skills Showcase */}
             <section style={{ padding: 'var(--spacing-xl) 0' }}>
-                <SkillsShowcase skills={portfolioData.skills} />
+                <SkillsShowcase skills={data.skills} />
             </section>
 
             {/* Interests & Values */}
@@ -70,7 +88,7 @@ export default function About() {
                             flexDirection: 'column',
                             gap: 'var(--spacing-sm)'
                         }}>
-                            {portfolioData.about.interests.map((interest, index) => (
+                            {data.about.interests.map((interest, index) => (
                                 <li key={index} style={{
                                     fontSize: '1rem',
                                     color: 'var(--color-text-secondary)',
@@ -105,7 +123,7 @@ export default function About() {
                             flexDirection: 'column',
                             gap: 'var(--spacing-sm)'
                         }}>
-                            {portfolioData.about.values.map((value, index) => (
+                            {data.about.values.map((value, index) => (
                                 <li key={index} style={{
                                     fontSize: '1rem',
                                     color: 'var(--color-text-secondary)',
@@ -126,7 +144,7 @@ export default function About() {
                 </div>
             </section>
 
-            <Footer />
+            <Footer data={data} />
         </main>
     )
 }

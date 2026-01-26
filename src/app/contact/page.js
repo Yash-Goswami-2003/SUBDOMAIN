@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import Footer from '@/components/Portfolio/Footer'
-import { portfolioData } from '@/data/portfolio'
+import Loader from '@/components/Portfolio/Loader'
+import { useProfileData } from '@/hooks/useProfileData'
 
 export default function Contact() {
+    const { data, loading, error } = useProfileData()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -35,11 +37,24 @@ export default function Contact() {
         }, 1500)
     }
 
+    if (loading) return <Loader />
+
+    if (error) {
+        return (
+            <main className="page-transition" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ color: 'var(--color-error)' }}>Error loading contact info</div>
+                <button onClick={() => window.location.reload()} className="button">Retry</button>
+            </main>
+        )
+    }
+
+    if (!data) return null;
+
     const socialLinks = [
-        { name: 'GitHub', url: portfolioData.social.github, icon: '💻' },
-        { name: 'LinkedIn', url: portfolioData.social.linkedin, icon: '👔' },
-        { name: 'Twitter', url: portfolioData.social.twitter, icon: '🐦' },
-        { name: 'Portfolio', url: portfolioData.social.portfolio, icon: '🌐' }
+        { name: 'GitHub', url: data.social.github, icon: '💻' },
+        { name: 'LinkedIn', url: data.social.linkedin, icon: '👔' },
+        { name: 'Twitter', url: data.social.twitter, icon: '🐦' },
+        { name: 'Portfolio', url: data.social.portfolio, icon: '🌐' }
     ]
 
     return (
@@ -323,14 +338,14 @@ export default function Contact() {
                                         Email
                                     </div>
                                     <a
-                                        href={`mailto:${portfolioData.email}`}
+                                        href={`mailto:${data.email}`}
                                         style={{
                                             fontSize: '1rem',
                                             color: 'var(--color-text-primary)',
                                             textDecoration: 'underline'
                                         }}
                                     >
-                                        {portfolioData.email}
+                                        {data.email}
                                     </a>
                                 </div>
                                 <div>
@@ -346,7 +361,7 @@ export default function Contact() {
                                         fontSize: '1rem',
                                         color: 'var(--color-text-primary)'
                                     }}>
-                                        {portfolioData.location}
+                                        {data.location}
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +414,7 @@ export default function Contact() {
                 </div>
             </section>
 
-            <Footer />
+            <Footer data={data} />
         </main>
     )
 }

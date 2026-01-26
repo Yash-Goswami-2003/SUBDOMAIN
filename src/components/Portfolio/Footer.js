@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { portfolioData } from '@/data/portfolio'
 
-export default function Footer() {
+export default function Footer({ data }) {
   const currentYear = new Date().getFullYear()
+
+  if (!data) return null;
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -14,9 +15,9 @@ export default function Footer() {
   ]
 
   const socialLinks = [
-    { name: 'GitHub', url: portfolioData.social.github },
-    { name: 'LinkedIn', url: portfolioData.social.linkedin },
-    { name: 'Twitter', url: portfolioData.social.twitter }
+    { name: 'GitHub', url: data.social.github },
+    { name: 'LinkedIn', url: data.social.linkedin },
+    { name: 'Twitter', url: data.social.twitter }
   ]
 
   return (
@@ -39,10 +40,10 @@ export default function Footer() {
           {/* Brand Section */}
           <div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: 'var(--spacing-sm)' }}>
-              {portfolioData.name}
+              {data.name}
             </h3>
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: '1.6' }}>
-              {portfolioData.title} crafting digital experiences with modern technologies.
+              {data.title} crafting digital experiences with modern technologies.
             </p>
           </div>
 
@@ -112,7 +113,7 @@ export default function Footer() {
           color: 'var(--color-text-secondary)'
         }}>
           <div>
-            © {currentYear} {portfolioData.name}. All rights reserved.
+            © {currentYear} {data.name}. All rights reserved.
           </div>
           <div style={{ fontStyle: 'italic' }}>
             Built with 🖤 using Next.js & Vanilla CSS
