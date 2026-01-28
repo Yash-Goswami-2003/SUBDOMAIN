@@ -79,6 +79,13 @@ export default function HeroSection({ data }) {
       justifyContent: 'center',
       overflow: 'hidden'
     }}>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .hero-content {
+            margin-top: -10vh;
+          }
+        }
+      `}</style>
       {/* Animated Canvas Background */}
       <canvas
         ref={canvasRef}
@@ -86,7 +93,7 @@ export default function HeroSection({ data }) {
       />
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '800px' }}>
+      <div className="hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '800px' }}>
         {/* Floating Badge */}
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
           <div className="animate-float" style={{

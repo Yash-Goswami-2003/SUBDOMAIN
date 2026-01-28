@@ -16,16 +16,13 @@ export default function FeaturedProject() {
     return (
         <section className="container" style={{
             padding: 'var(--spacing-xl) 0',
-            marginBottom: 'var(--spacing-xl)'
+            marginBottom: 'var(--spacing-xl)',
+            position: 'relative'
         }}>
             {/* Section Header */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+            <div className="section-header" style={{
                 marginBottom: 'var(--spacing-xl)',
-                flexWrap: 'wrap',
-                gap: 'var(--spacing-md)'
+                maxWidth: 'calc(100% - 200px)'
             }}>
                 <div>
                     <h2 style={{
@@ -44,6 +41,14 @@ export default function FeaturedProject() {
                         A glimpse into my latest work
                     </p>
                 </div>
+            </div>
+
+            {/* Desktop View All Link */}
+            <div className="desktop-link" style={{
+                position: 'absolute',
+                top: 'var(--spacing-xl)',
+                right: 0
+            }}>
                 <Link
                     href="/projects"
                     className="button"
@@ -73,7 +78,7 @@ export default function FeaturedProject() {
                     gap: 0
                 }}>
                     {/* Project Visual */}
-                    <div style={{
+                    <div className="project-visual" style={{
                         position: 'relative',
                         minHeight: '320px',
                         backgroundColor: 'var(--color-bg)',
@@ -196,7 +201,7 @@ export default function FeaturedProject() {
                     </div>
 
                     {/* Project Info */}
-                    <div style={{
+                    <div className="project-info" style={{
                         padding: 'var(--spacing-xl)',
                         display: 'flex',
                         flexDirection: 'column',
@@ -221,7 +226,7 @@ export default function FeaturedProject() {
                         </p>
 
                         {/* Tech Stack */}
-                        <div style={{
+                        <div className="tech-stack" style={{
                             display: 'flex',
                             flexWrap: 'wrap',
                             gap: 'var(--spacing-xs)',
@@ -246,7 +251,7 @@ export default function FeaturedProject() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex" style={{ gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
+                        <div className="flex action-buttons" style={{ gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
                             <a
                                 href={featured.liveUrl}
                                 target="_blank"
@@ -273,16 +278,56 @@ export default function FeaturedProject() {
                 </div>
             </div>
 
+            {/* Mobile View All Link */}
+            <div className="mobile-link" style={{
+                display: 'none',
+                marginTop: 'var(--spacing-xl)',
+                justifyContent: 'center'
+            }}>
+                <Link
+                    href="/projects"
+                    className="button"
+                    style={{
+                        backgroundColor: 'transparent',
+                        color: 'var(--color-text-primary)',
+                        border: '1px solid var(--color-border)',
+                        fontSize: '0.875rem'
+                    }}
+                >
+                    View All Projects →
+                </Link>
+            </div>
+
             {/* Mobile responsive styles */}
             <style jsx>{`
                 @media (max-width: 768px) {
-                    div[style*="grid-template-columns: 1fr 1fr"] {
-                        grid-template-columns: 1fr !important;
+                    .section-header {
+                        max-width: 100% !important;
+                        text-align: center !important;
+                        margin-bottom: var(--spacing-lg) !important;
                     }
-                    div[style*="border-right"] {
+                    .desktop-link {
+                        display: none !important;
+                    }
+                    .mobile-link {
+                        display: flex !important;
+                    }
+                    .project-info {
+                        text-align: center !important;
+                    }
+                    .tech-stack {
+                        justify-content: center !important;
+                    }
+                    .action-buttons {
+                        justify-content: center !important;
+                    }
+                    .project-visual {
                         border-right: none !important;
                         border-bottom: 1px solid var(--color-border) !important;
-                        min-height: 200px !important;
+                        min-height: 250px !important;
+                    }
+                    div[style*="grid-template-columns: 1fr 1fr"] {
+                        grid-template-columns: 1fr !important;
                     }
                 }
             `}</style>
