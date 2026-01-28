@@ -54,7 +54,7 @@ export const portfolioData = {
   projects: [
     {
       id: 1,
-      title: "Multi-Tenant SaaS Platform",
+      title: "Multi-Tenant SadwaS Platform",
       description: "A scalable multi-tenant application with subdomain routing and dynamic theming",
       longDescription: "Built a comprehensive multi-tenant SaaS platform that allows organizations to create their own branded subdomains. Features include dynamic configuration, role-based access control, and real-time collaboration.",
       image: "/project-1.jpg",

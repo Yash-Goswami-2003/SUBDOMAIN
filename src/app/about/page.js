@@ -4,7 +4,7 @@ import ExperienceTimeline from '@/components/Portfolio/ExperienceTimeline'
 import SkillsShowcase from '@/components/Portfolio/SkillsShowcase'
 import Footer from '@/components/Portfolio/Footer'
 import Loader from '@/components/Portfolio/Loader'
-import { useProfileData } from '@/hooks/useProfileData'
+import { useProfileData } from '@/context/ProfileDataContext'
 
 export default function About() {
     const { data, loading, error } = useProfileData()

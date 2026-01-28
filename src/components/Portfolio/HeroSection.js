@@ -107,7 +107,7 @@ export default function HeroSection({ data }) {
               borderRadius: '50%',
               backgroundColor: 'var(--color-accent)'
             }} />
-            This website is for testing purposes only.
+            This website is under development.
           </div>
         </div>
 
@@ -156,24 +156,7 @@ export default function HeroSection({ data }) {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="animate-float" style={{
-        position: 'absolute',
-        bottom: 'var(--spacing-xl)',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        fontSize: '0.75rem',
-        color: 'var(--color-text-secondary)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.1em',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 'var(--spacing-sm)'
-      }}>
-        Scroll
-        <div style={{ width: '1px', height: '40px', backgroundColor: 'var(--color-border)' }} />
-      </div>
+
     </section>
   )
 }

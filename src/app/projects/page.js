@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Footer from '@/components/Portfolio/Footer'
 import Loader from '@/components/Portfolio/Loader'
-import { useProfileData } from '@/hooks/useProfileData'
+import { useProfileData } from '@/context/ProfileDataContext'
 
 export default function Projects() {
     const { data, loading, error } = useProfileData()

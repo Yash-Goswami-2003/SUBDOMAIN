@@ -1,9 +1,12 @@
 'use client'
 
 import HeroSection from '@/components/Portfolio/HeroSection'
+import QuickStats from '@/components/Portfolio/QuickStats'
+import AboutMe from '@/components/Portfolio/AboutMe'
+import FeaturedProject from '@/components/Portfolio/FeaturedProject'
 import Footer from '@/components/Portfolio/Footer'
 import Loader from '@/components/Portfolio/Loader'
-import { useProfileData } from '@/hooks/useProfileData'
+import { useProfileData } from '@/context/ProfileDataContext'
 
 export default function Home() {
   const { data, loading, error } = useProfileData()
@@ -24,8 +27,12 @@ export default function Home() {
   return (
     <main className="page-transition">
       <HeroSection data={data} />
+      <QuickStats data={data} />
+      <AboutMe data={data} />
+      <FeaturedProject />
       <Footer data={data} />
     </main>
   )
 }
+
 
