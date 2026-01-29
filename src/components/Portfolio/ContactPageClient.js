@@ -37,7 +37,6 @@ export default function ContactPageClient({ data }) {
   const socialLinks = [
     { name: 'GitHub', url: data.social.github, icon: '💻' },
     { name: 'LinkedIn', url: data.social.linkedin, icon: '👔' },
-    { name: 'Twitter', url: data.social.twitter, icon: '🐦' },
     { name: 'Portfolio', url: data.social.portfolio, icon: '🌐' }
   ]
 

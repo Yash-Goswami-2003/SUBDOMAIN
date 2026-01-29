@@ -36,12 +36,15 @@ export default function AboutMe({ data }) {
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: 'var(--spacing-xl)',
-                alignItems: 'start'
+                // Removed alignItems: 'start' to let items stretch to equal height
             }}>
                 {/* Story Card */}
                 <div className="card" style={{
                     padding: 'var(--spacing-xl)',
-                    animation: 'fadeInUp 0.5s ease both'
+                    animation: 'fadeInUp 0.5s ease both',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div style={{
                         display: 'flex',
@@ -64,7 +67,8 @@ export default function AboutMe({ data }) {
                     <p style={{
                         fontSize: '0.95rem',
                         color: 'var(--color-text-secondary)',
-                        lineHeight: 1.8
+                        lineHeight: 1.8,
+                        flex: 1 // Allow text to take available space
                     }}>
                         {data.about?.story || "I'm a passionate developer who loves turning complex problems into simple, beautiful solutions. With a focus on clean code and user experience, I strive to create applications that make a difference."}
                     </p>
@@ -73,7 +77,10 @@ export default function AboutMe({ data }) {
                 {/* Quick Info Card */}
                 <div className="card" style={{
                     padding: 'var(--spacing-xl)',
-                    animation: 'fadeInUp 0.5s ease 0.1s both'
+                    animation: 'fadeInUp 0.5s ease 0.1s both',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div style={{
                         display: 'flex',
@@ -98,7 +105,8 @@ export default function AboutMe({ data }) {
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 'var(--spacing-md)'
+                        gap: 'var(--spacing-md)',
+                        flex: 1 // Allow content to fill space
                     }}>
                         {/* Location */}
                         <div style={{
@@ -153,7 +161,10 @@ export default function AboutMe({ data }) {
                 {/* Interests */}
                 <div className="card" style={{
                     padding: 'var(--spacing-xl)',
-                    animation: 'fadeInUp 0.5s ease 0.2s both'
+                    animation: 'fadeInUp 0.5s ease 0.2s both',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div style={{
                         display: 'flex',
@@ -175,7 +186,8 @@ export default function AboutMe({ data }) {
                     <div style={{
                         display: 'flex',
                         flexWrap: 'wrap',
-                        gap: 'var(--spacing-xs)'
+                        gap: 'var(--spacing-xs)',
+                        flex: 1
                     }}>
                         {(data.about?.interests || ['Web Development', 'Open Source', 'UI/UX Design', 'Learning New Tech']).map((interest, idx) => (
                             <span
@@ -187,7 +199,8 @@ export default function AboutMe({ data }) {
                                     backgroundColor: 'var(--color-bg)',
                                     color: 'var(--color-text-secondary)',
                                     borderRadius: 'var(--radius-sm)',
-                                    border: '1px solid var(--color-border)'
+                                    border: '1px solid var(--color-border)',
+                                    height: 'fit-content'
                                 }}
                             >
                                 {interest}
@@ -199,7 +212,10 @@ export default function AboutMe({ data }) {
                 {/* Values */}
                 <div className="card" style={{
                     padding: 'var(--spacing-xl)',
-                    animation: 'fadeInUp 0.5s ease 0.3s both'
+                    animation: 'fadeInUp 0.5s ease 0.3s both',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div style={{
                         display: 'flex',
@@ -221,7 +237,8 @@ export default function AboutMe({ data }) {
                     <div style={{
                         display: 'flex',
                         flexWrap: 'wrap',
-                        gap: 'var(--spacing-xs)'
+                        gap: 'var(--spacing-xs)',
+                        flex: 1
                     }}>
                         {(data.about?.values || ['Clean Code', 'Continuous Learning', 'Collaboration', 'User-First Design']).map((value, idx) => (
                             <span
@@ -233,7 +250,8 @@ export default function AboutMe({ data }) {
                                     backgroundColor: 'var(--color-bg)',
                                     color: 'var(--color-text-secondary)',
                                     borderRadius: 'var(--radius-sm)',
-                                    border: '1px solid var(--color-border)'
+                                    border: '1px solid var(--color-border)',
+                                    height: 'fit-content'
                                 }}
                             >
                                 {value}

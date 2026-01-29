@@ -27,19 +27,33 @@ export const metadata = {
   }
 }
 
+import { headers } from 'next/headers'
 import Navbar from '@/components/Navbar'
 
 export default async function RootLayout({ children }) {
   const themes = await getThemes()
 
+  // Check if this is a subdomain request
+  const headersList = headers()
+  const host = headersList.get('host') || ''
+  const hostname = host.split(':')[0]
+  const parts = hostname.split('.')
+  const isSubdomain = (hostname.endsWith('.localhost') && parts[0] !== 'localhost') ||
+    (parts.length > 2 && parts[0] !== 'www')
+
   return (
     <html lang="en" className={`${poppins.variable} ${playfair.variable}`}>
       <body className={`${inter.className} overflow-x-hidden`}>
         <ThemeProvider initialThemes={themes}>
-          <Navbar />
-          <div style={{ paddingTop: '80px' }}>
-            {children}
-          </div>
+          {!isSubdomain && (
+            <>
+              <Navbar />
+              <div style={{ paddingTop: '80px' }}>
+                {children}
+              </div>
+            </>
+          )}
+          {isSubdomain && children}
         </ThemeProvider>
       </body>
     </html>
