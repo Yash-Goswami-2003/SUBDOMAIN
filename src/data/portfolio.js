@@ -122,10 +122,9 @@ export const testData = {
 
   // Social Links
   social: {
-    github: "https://github.com/yash-goswami-hsr",
-    linkedin: "https://linkedin.com/in/Yash-Goswami-2003",
-    twitter: "https://twitter.com/yashgoswami",
-    portfolio: "https://yashgoswami.dev"
+    github: "https://github.com/yash-goswami-2003",
+    linkedin: "https://linkedin.com/in/Yash-Goswami-hsr",
+    portfolio: "https://yashgoswami.com"
   },
 
   // Experience Details

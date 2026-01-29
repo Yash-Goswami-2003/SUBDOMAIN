@@ -26,7 +26,13 @@ export default function ExperienceTimeline({ experiences }) {
   }, [])
 
   return (
-    <section className="container" style={{ py: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
+    <section
+      className="container"
+      style={{
+        paddingTop: 'var(--spacing-xl)',
+        paddingBottom: 'var(--spacing-xl)'
+      }}
+    >
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Section Header */}
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
@@ -45,9 +51,9 @@ export default function ExperienceTimeline({ experiences }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 0a2 2 0 100 4m0-4a2 2 0 110 4" />
               </svg>
             </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: '800' }}>Experience</h2>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: '800' }}>Experience</h2>
           </div>
-          <p style={{ color: 'var(--color-text-secondary)' }}>My professional journey and growth</p>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', maxWidth: '500px' }}>My professional journey and growth</p>
         </div>
 
         {/* Timeline */}
@@ -97,7 +103,7 @@ export default function ExperienceTimeline({ experiences }) {
                 </div>
 
                 {/* Card */}
-                <div className="card" style={{ padding: 'var(--spacing-md)' }}>
+                <div className="card hover-lift" style={{ padding: 'var(--spacing-md)', transition: 'transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast)' }}>
                   <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 'var(--spacing-sm)' }}>
                     <div>
                       <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>{exp.position}</h3>

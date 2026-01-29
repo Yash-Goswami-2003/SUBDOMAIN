@@ -66,7 +66,8 @@ export default function WhatIDo() {
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: 'var(--spacing-lg)'
+                gap: 'var(--spacing-lg)',
+                alignItems: 'stretch'
             }}>
                 {services.map((service, index) => (
                     <div
@@ -74,7 +75,10 @@ export default function WhatIDo() {
                         className="card"
                         style={{
                             padding: 'var(--spacing-xl)',
-                            animation: `fadeInUp 0.5s ease ${index * 0.1}s both`
+                            animation: `fadeInUp 0.5s ease ${index * 0.1}s both`,
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column'
                         }}
                     >
                         {/* Icon */}
@@ -116,7 +120,8 @@ export default function WhatIDo() {
                         <div style={{
                             display: 'flex',
                             flexWrap: 'wrap',
-                            gap: 'var(--spacing-xs)'
+                            gap: 'var(--spacing-xs)',
+                            marginTop: 'auto'
                         }}>
                             {service.highlights.map((highlight, idx) => (
                                 <span

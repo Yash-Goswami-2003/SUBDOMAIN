@@ -30,7 +30,13 @@ export default function SkillsShowcase({ skills }) {
   }, [])
 
   return (
-    <section className="container" style={{ py: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
+    <section
+      className="container"
+      style={{
+        paddingTop: 'var(--spacing-xl)',
+        paddingBottom: 'var(--spacing-xl)'
+      }}
+    >
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         {/* Section Header */}
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
@@ -49,9 +55,9 @@ export default function SkillsShowcase({ skills }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: '800' }}>Skills & Expertise</h2>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: '800' }}>Skills & Expertise</h2>
           </div>
-          <p style={{ color: 'var(--color-text-secondary)' }}>Technologies and tools I work with</p>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', maxWidth: '500px' }}>Technologies and tools I work with</p>
         </div>
 
         {/* Skills Grid by Category */}
@@ -66,19 +72,23 @@ export default function SkillsShowcase({ skills }) {
                 </div>
 
                 {/* Skills Grid */}
-                <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+                <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
                   {categorySkills.map((skill, idx) => (
                     <div
                       key={idx}
                       ref={(el) => skillsRef.current[skill.name] = el}
                       data-skill={skill.name}
-                      className="card"
+                      className="card hover-lift"
                       onMouseEnter={() => setHoveredSkill(skill.name)}
                       onMouseLeave={() => setHoveredSkill(null)}
                       style={{
                         opacity: visibleSkills[skill.name] ? 1 : 0,
                         transform: visibleSkills[skill.name] ? 'translateY(0)' : 'translateY(20px)',
-                        transition: 'opacity 0.5s ease, transform 0.5s ease',
+                        transition: 'opacity 0.5s ease, transform 0.5s ease, box-shadow var(--transition-fast), border-color var(--transition-fast)',
+                        borderColor: hoveredSkill === skill.name ? 'var(--color-accent)' : 'var(--color-border)',
+                        boxShadow: hoveredSkill === skill.name
+                          ? '0 12px 30px -8px rgba(0,0,0,0.25)'
+                          : 'none'
                       }}
                     >
                       <h4 style={{ fontWeight: '600', marginBottom: 'var(--spacing-md)' }}>{skill.name}</h4>

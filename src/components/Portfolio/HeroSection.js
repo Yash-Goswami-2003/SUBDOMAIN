@@ -12,8 +12,13 @@ export default function HeroSection({ data }) {
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+
+    resize()
 
     const particles = []
     const particleCount = 40
@@ -68,17 +73,27 @@ export default function HeroSection({ data }) {
     }
 
     animate()
+
+    window.addEventListener('resize', resize)
+    return () => {
+      window.removeEventListener('resize', resize)
+    }
   }, [])
 
   return (
-    <section className="container" style={{
-      position: 'relative',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden'
-    }}>
+    <section
+      className="container"
+      style={{
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        paddingTop: 'var(--spacing-xl)',
+        paddingBottom: 'var(--spacing-xl)'
+      }}
+    >
       <style jsx>{`
         @media (max-width: 768px) {
           .hero-content {

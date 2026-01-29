@@ -16,8 +16,7 @@ export default function Footer({ data }) {
 
   const socialLinks = [
     { name: 'GitHub', url: data.social.github },
-    { name: 'LinkedIn', url: data.social.linkedin },
-    { name: 'Twitter', url: data.social.twitter }
+    { name: 'LinkedIn', url: data.social.linkedin }
   ]
 
   return (

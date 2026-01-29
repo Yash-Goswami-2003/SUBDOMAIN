@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import ThemeSwitcher from './ThemeSwitcher'
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false)
@@ -96,6 +97,7 @@ export default function Navbar() {
                             </Link>
                         )
                     })}
+                    <ThemeSwitcher />
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -174,6 +176,9 @@ export default function Navbar() {
                                 </Link>
                             )
                         })}
+                        <div style={{ padding: 'var(--spacing-sm)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--spacing-md)' }}>
+                            <ThemeSwitcher />
+                        </div>
                     </div>
                 </div>
             )}

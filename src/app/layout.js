@@ -1,6 +1,7 @@
 import './globals.css'
 import { Inter, Poppins, Playfair_Display } from 'next/font/google'
-import { ProfileDataProvider } from '@/context/ProfileDataContext'
+import { getThemes } from '@/lib/themeData'
+import { ThemeProvider } from '@/context/ThemeContext'
 
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({
@@ -28,16 +29,18 @@ export const metadata = {
 
 import Navbar from '@/components/Navbar'
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const themes = await getThemes()
+
   return (
     <html lang="en" className={`${poppins.variable} ${playfair.variable}`}>
-      <body className={`${inter.className} bg-slate-900 text-white overflow-x-hidden`}>
-        <ProfileDataProvider>
+      <body className={`${inter.className} overflow-x-hidden`}>
+        <ThemeProvider initialThemes={themes}>
           <Navbar />
           <div style={{ paddingTop: '80px' }}>
             {children}
           </div>
-        </ProfileDataProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

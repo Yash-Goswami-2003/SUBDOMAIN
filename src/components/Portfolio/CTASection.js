@@ -12,7 +12,7 @@ export default function CTASection() {
       className="container"
       style={{
         position: 'relative',
-        py: 'var(--spacing-xl)',
+        paddingTop: 'var(--spacing-xl)',
         paddingBottom: 'var(--spacing-xl)',
         overflow: 'hidden',
         backgroundColor: 'var(--color-bg)',

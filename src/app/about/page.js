@@ -1,26 +1,12 @@
-'use client'
-
 import ExperienceTimeline from '@/components/Portfolio/ExperienceTimeline'
 import SkillsShowcase from '@/components/Portfolio/SkillsShowcase'
 import Footer from '@/components/Portfolio/Footer'
-import Loader from '@/components/Portfolio/Loader'
-import { useProfileData } from '@/context/ProfileDataContext'
+import { getPortfolioConfig } from '@/lib/portfolioConfig'
 
-export default function About() {
-    const { data, loading, error } = useProfileData()
+export const dynamic = 'force-static'
 
-    if (loading) return <Loader />
-
-    if (error) {
-        return (
-            <main className="page-transition" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ color: 'var(--color-error)' }}>Error loading about info</div>
-                <button onClick={() => window.location.reload()} className="button">Retry</button>
-            </main>
-        )
-    }
-
-    if (!data) return null;
+export default async function About() {
+    const data = await getPortfolioConfig()
 
     return (
         <main className="page-transition">
@@ -35,7 +21,7 @@ export default function About() {
                 padding: 'var(--spacing-xl) 0'
             }}>
                 <h1 style={{
-                    fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+                    fontSize: 'clamp(2rem, 7vw, 3rem)',
                     fontWeight: '900',
                     letterSpacing: '-0.03em',
                     marginBottom: 'var(--spacing-md)',
@@ -44,10 +30,11 @@ export default function About() {
                     About Me
                 </h1>
                 <p style={{
-                    fontSize: '1.25rem',
+                    fontSize: '1.05rem',
                     color: 'var(--color-text-secondary)',
-                    maxWidth: '700px',
-                    lineHeight: '1.7'
+                    maxWidth: '680px',
+                    lineHeight: '1.6',
+                    margin: '0 auto'
                 }}>
                     {data.about.story}
                 </p>
