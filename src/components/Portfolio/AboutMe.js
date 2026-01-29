@@ -261,6 +261,7 @@ export default function AboutMe({ data }) {
                 </div>
             </div>
 
+
             {/* Mobile responsive styles */}
             <style jsx>{`
                 @media (max-width: 768px) {
@@ -269,6 +270,6 @@ export default function AboutMe({ data }) {
                     }
                 }
             `}</style>
-        </section>
+        </section >
     )
 }

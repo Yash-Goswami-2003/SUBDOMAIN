@@ -1,6 +1,7 @@
 import ExperienceTimeline from '@/components/Portfolio/ExperienceTimeline'
 import SkillsShowcase from '@/components/Portfolio/SkillsShowcase'
 import Footer from '@/components/Portfolio/Footer'
+import AuthorLinks from '@/components/Portfolio/AuthorLinks'
 import { getPortfolioConfig } from '@/lib/portfolioConfig'
 
 export const dynamic = 'force-static'
@@ -129,6 +130,10 @@ export default async function About() {
                         </ul>
                     </div>
                 </div>
+            </section>
+
+            <section style={{ paddingBottom: 'var(--spacing-xl)' }}>
+                <AuthorLinks />
             </section>
 
             <Footer data={data} />
