@@ -5,13 +5,18 @@ export function middleware(req) {
   const host = req.headers.get("host");
 
   // Get hostname without port
-  const hostname = host.split(':')[0];
+  let hostname = host.split(':')[0];
+
+  // Remove 'www.' prefix if present
+  if (hostname.startsWith('www.')) {
+    hostname = hostname.replace('www.', '');
+  }
 
   // Split hostname into parts
   const parts = hostname.split('.');
 
   // Determine if we have a subdomain
-  // In localhost: 'blogs.localhost:3000' -> ['blogs', 'localhost']
+  // In localhost: 'blogs.localhost' -> ['blogs', 'localhost']
   // In production: 'blogs.domain.com' -> ['blogs', 'domain', 'com']
   const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost');
 
@@ -21,6 +26,8 @@ export function middleware(req) {
       subdomain = parts[0];
     }
   } else {
+    // For production (e.g., blogs.yashgoswami.com), parts should be > 2
+    // parts[0] would be 'blogs'
     if (parts.length > 2) {
       subdomain = parts[0];
     }
