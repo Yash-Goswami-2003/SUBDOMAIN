@@ -35,6 +35,31 @@ export function middleware(req) {
 
   // If subdomain is found and it's not 'www', rewrite to the tenant route
   if (subdomain && subdomain !== 'www') {
+    // API Routes should be handled globally, skip subdomain logic for them
+    if (url.pathname.startsWith('/api')) {
+      return NextResponse.next();
+    }
+
+    // Authentication Check for 'admin' subdomain
+    if (subdomain === 'admin') {
+      const authToken = req.cookies.get('auth_token')?.value;
+      const isLoginPage = url.pathname === '/login';
+
+      // Redirect to login if not authenticated and not on the login page
+      if (!authToken && !isLoginPage) {
+        const loginUrl = req.nextUrl.clone();
+        loginUrl.pathname = '/login';
+        return NextResponse.redirect(loginUrl);
+      }
+
+      // Redirect to dashboard if authenticated and on the login page
+      if (authToken && isLoginPage) {
+        const dashboardUrl = req.nextUrl.clone();
+        dashboardUrl.pathname = '/';
+        return NextResponse.redirect(dashboardUrl);
+      }
+    }
+
     // The folder is src/app/sites/[tenant], so rewrite to /sites/[tenant]
     url.pathname = `/sites/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
