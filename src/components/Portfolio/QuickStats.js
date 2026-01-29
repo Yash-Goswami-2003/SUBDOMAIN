@@ -111,9 +111,8 @@ export default function QuickStats({ data }) {
             marginTop: 'var(--spacing-xl)',
             marginBottom: 'var(--spacing-xl)'
         }}>
-            <div style={{
+            <div className="quick-stats-grid" style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
                 gap: 'var(--spacing-lg)'
             }}>
                 {stats.map((stat, index) => (
@@ -161,13 +160,16 @@ export default function QuickStats({ data }) {
 
             {/* Mobile responsive styles */}
             <style jsx>{`
+                .quick-stats-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                }
                 @media (max-width: 900px) {
-                    div[style*="grid-template-columns: repeat(4"] {
+                    .quick-stats-grid {
                         grid-template-columns: repeat(2, 1fr) !important;
                     }
                 }
                 @media (max-width: 500px) {
-                    div[style*="grid-template-columns: repeat(4"] {
+                    .quick-stats-grid {
                         grid-template-columns: 1fr !important;
                     }
                 }

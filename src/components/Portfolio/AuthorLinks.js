@@ -122,8 +122,7 @@ export default function AuthorLinks() {
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '10px',
-                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                            transition: 'transform 0.2s ease',
                         }}
                     >
                         <span>Browse Blogs</span>

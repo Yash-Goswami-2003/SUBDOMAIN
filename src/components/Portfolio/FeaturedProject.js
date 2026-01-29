@@ -72,7 +72,7 @@ export default function FeaturedProject() {
                     animation: 'fadeInUp 0.6s ease both'
                 }}
             >
-                <div style={{
+                <div className="featured-project-grid" style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: 0
@@ -326,7 +326,7 @@ export default function FeaturedProject() {
                         border-bottom: 1px solid var(--color-border) !important;
                         min-height: 250px !important;
                     }
-                    div[style*="grid-template-columns: 1fr 1fr"] {
+                    .featured-project-grid {
                         grid-template-columns: 1fr !important;
                     }
                 }

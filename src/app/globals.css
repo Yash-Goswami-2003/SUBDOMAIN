@@ -369,13 +369,14 @@ h6 {
 }
 
 /* Hover Effects */
+/* Hover Effects */
 .hover-lift {
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  border-color: var(--color-text-secondary);
 }
 
 .hover-scale {
@@ -388,11 +389,11 @@ h6 {
 
 .hover-glow {
   position: relative;
-  transition: box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast);
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-text-primary);
 }
 
 /* Navigation Link Hover Effect */

@@ -32,11 +32,10 @@ export default function AboutMe({ data }) {
             </div>
 
             {/* Content Grid */}
-            <div style={{
+            <div className="about-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: 'var(--spacing-xl)',
-                // Removed alignItems: 'start' to let items stretch to equal height
             }}>
                 {/* Story Card */}
                 <div className="card" style={{
@@ -264,8 +263,11 @@ export default function AboutMe({ data }) {
 
             {/* Mobile responsive styles */}
             <style jsx>{`
+                .about-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
                 @media (max-width: 768px) {
-                    div[style*="grid-template-columns: 1fr 1fr"] {
+                    .about-grid {
                         grid-template-columns: 1fr !important;
                     }
                 }
