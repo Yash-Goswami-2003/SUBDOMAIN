@@ -15,8 +15,8 @@ export default function Footer({ data }) {
   ]
 
   const socialLinks = [
-    { name: 'GitHub', url: data.social.github },
-    { name: 'LinkedIn', url: data.social.linkedin }
+    { name: 'GitHub', url: data.social?.github || '#' },
+    { name: 'LinkedIn', url: data.social?.linkedin || '#' }
   ]
 
   return (
@@ -39,10 +39,10 @@ export default function Footer({ data }) {
           {/* Brand Section */}
           <div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: 'var(--spacing-sm)' }}>
-              {data.name}
+              {data.name || 'Your Name'}
             </h3>
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: '1.6' }}>
-              {data.title} crafting digital experiences with modern technologies.
+              {data.title || 'Developer'} crafting digital experiences with modern technologies.
             </p>
           </div>
 
@@ -112,7 +112,7 @@ export default function Footer({ data }) {
           color: 'var(--color-text-secondary)'
         }}>
           <div>
-            © {currentYear} {data.name}. All rights reserved.
+            © {currentYear} {data.name || 'Your Name'}. All rights reserved.
           </div>
           <div style={{ fontStyle: 'italic' }}>
             Built with 🖤 using Next.js & Vanilla CSS
@@ -122,4 +122,3 @@ export default function Footer({ data }) {
     </footer>
   )
 }
-

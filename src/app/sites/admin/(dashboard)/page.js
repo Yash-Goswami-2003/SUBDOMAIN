@@ -32,24 +32,28 @@ const Icons = {
     ),
     Alert: () => (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    ),
+    Info: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
     )
 };
 
-const Modal = ({ isOpen, onClose, onConfirm, title, message }) => {
+const Modal = ({ isOpen, onClose, onConfirm, title, message, type = 'warning', confirmText = 'Confirm' }) => {
     if (!isOpen) return null;
+    const isWarning = type === 'warning';
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease-out' }}>
             <div style={{ backgroundColor: 'var(--color-surface)', padding: '2rem', borderRadius: 'var(--radius-lg)', maxWidth: '450px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', border: '1px solid var(--color-border)', animation: 'slideUp 0.3s ease-out' }} className="animate-fade-in-up">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                    <div style={{ padding: '0.75rem', borderRadius: '50%', backgroundColor: '#fef2f2' }}>
-                        <Icons.Alert />
+                    <div style={{ padding: '0.75rem', borderRadius: '50%', backgroundColor: isWarning ? '#fef2f2' : '#f0fdf4' }}>
+                        {isWarning ? <Icons.Alert /> : <Icons.Info />}
                     </div>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '800' }}>{title}</h3>
                 </div>
                 <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: '1.5' }}>{message}</p>
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                     <button onClick={onClose} style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', backgroundColor: 'transparent', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
-                    <button onClick={() => { onConfirm(); onClose(); }} style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)', border: 'none', backgroundColor: '#ef4444', color: 'white', fontWeight: '600', cursor: 'pointer' }}>Confirm Restore</button>
+                    <button onClick={() => { onConfirm(); onClose(); }} style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)', border: 'none', backgroundColor: isWarning ? '#ef4444' : '#10b981', color: 'white', fontWeight: '600', cursor: 'pointer' }}>{confirmText}</button>
                 </div>
             </div>
         </div>
@@ -67,6 +71,7 @@ export default function AdminDashboard() {
     const [editorValue, setEditorValue] = useState('[\n  \n]');
     const [status, setStatus] = useState({ message: '', type: '' });
     const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -200,6 +205,17 @@ export default function AdminDashboard() {
                 onConfirm={handleRestoreConfirm}
                 title="Restore to Default"
                 message="Are you sure you want to proceed? This will clear all existing custom configurations and restore the website to its original default settings. This action cannot be undone."
+                type="warning"
+                confirmText="Confirm Restore"
+            />
+            <Modal
+                isOpen={isUpdateModalOpen}
+                onClose={() => setIsUpdateModalOpen(false)}
+                onConfirm={handleConfigSubmit}
+                title="Update Configuration"
+                message="Are you sure you want to update the configuration? This will replace all documents matching the current filter with the data in the editor."
+                type="info"
+                confirmText="Update"
             />
 
             {/* Mobile Overlay */}
@@ -449,7 +465,7 @@ export default function AdminDashboard() {
 
                             {/* Action Buttons */}
                             <button
-                                onClick={handleConfigSubmit}
+                                onClick={() => method === 'GET' ? handleConfigSubmit() : setIsUpdateModalOpen(true)}
                                 style={{
                                     padding: '0.5rem 1.25rem',
                                     backgroundColor: method === 'GET' ? 'var(--color-accent)' : '#10b981',

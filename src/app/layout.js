@@ -1,8 +1,14 @@
 import './globals.css'
-import { Inter, Poppins, Playfair_Display } from 'next/font/google'
+// import { Inter, Poppins, Playfair_Display } from 'next/font/google' // Disabled due to network timeouts
 import { getThemes } from '@/lib/themeData'
 import { ThemeProvider } from '@/context/ThemeContext'
 
+// Fallback fonts
+const inter = { className: 'font-sans' }
+const poppins = { variable: 'font-poppins' }
+const playfair = { variable: 'font-serif' }
+
+/* 
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({
   weight: ['400', '500', '600', '700', '800'],
@@ -13,7 +19,8 @@ const playfair = Playfair_Display({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
   variable: '--font-playfair'
-})
+}) 
+*/
 
 export const metadata = {
   title: 'Yash Goswami - Full Stack Developer Portfolio',
@@ -42,8 +49,13 @@ export default async function RootLayout({ children }) {
     (parts.length > 2 && parts[0] !== 'www')
 
   return (
-    <html lang="en" className={`${poppins.variable} ${playfair.variable}`}>
-      <body className={`${inter.className} overflow-x-hidden`}>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-sans overflow-x-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
         <ThemeProvider initialThemes={themes}>
           {!isSubdomain && (
             <>

@@ -1,4 +1,8 @@
 ## Feature
+- Successfully implemented the mapping of the MongoDB documents' JSON configurations with the UI. 
+- We have to do a little rework for the strings that are not present in the document and are not mapped to the UI. 
+
+## Feature
 - Implementation of admin panel for configuration mutation.
 - Implemented MongoDB and Monaco Code Editor for Postman-like UI.
 - Extracted strings to a unified single source of truth object for resets point.
