@@ -1,10 +1,10 @@
-import clientPromise from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import singleSourceOfTruth from "@/data/unified";
 
 export async function POST() {
     try {
-        const client = await clientPromise;
+        const client = await connectToDatabase();
         const db = client.db("yashgoswami");
         const collection = db.collection("website");
 

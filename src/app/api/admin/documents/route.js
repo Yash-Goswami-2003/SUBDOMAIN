@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -15,7 +15,7 @@ export async function GET(request) {
     }
 
     try {
-        const client = await clientPromise;
+        const client = await connectToDatabase();
         const db = client.db("yashgoswami");
         const documents = await db.collection("website")
             .find(filter)
@@ -40,7 +40,7 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Filter object is required for batch update' }, { status: 400 });
         }
 
-        const client = await clientPromise;
+        const client = await connectToDatabase();
         const db = client.db("yashgoswami");
         const collection = db.collection("website");
 

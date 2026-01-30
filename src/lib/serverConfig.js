@@ -1,8 +1,8 @@
-import clientPromise from "./mongodb";
+import connectToDatabase from "./mongodb";
 
 export async function fetchServerConfig() {
     try {
-        const client = await clientPromise;
+        const client = await connectToDatabase();
         const db = client.db("yashgoswami");
         const data = await db.collection("website").find({}).toArray();
         // Convert _id to string to avoid serialization issues
