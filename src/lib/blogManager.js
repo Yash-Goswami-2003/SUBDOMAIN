@@ -1,10 +1,23 @@
-import { blogData } from '@/data/blogs'
+import { fetchServerConfig } from './serverConfig';
+import { blogData } from '@/data/blogs'; // Fallback data
 
 export async function getAllBlogs() {
-    // Simulate API delay
-    return blogData
+    try {
+        const allDocs = await fetchServerConfig();
+        const blogs = allDocs.filter(doc => doc.documentType === 'blog');
+
+        // Return MongoDB data if available, otherwise fallback to static
+        if (blogs.length > 0) {
+            return blogs;
+        }
+        return blogData;
+    } catch (error) {
+        console.error('Failed to fetch blogs from MongoDB:', error);
+        return blogData; // Fallback to static data
+    }
 }
 
 export async function getBlogById(id) {
-    return blogData.find(b => b.id === id)
+    const blogs = await getAllBlogs();
+    return blogs.find(b => b.id === id);
 }
