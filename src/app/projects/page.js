@@ -1,7 +1,7 @@
 import { getPortfolioConfig } from '@/lib/portfolioConfig'
 import ProjectsPageClient from '@/components/Portfolio/ProjectsPageClient'
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic'
 
 export default async function Projects() {
   const data = await getPortfolioConfig()

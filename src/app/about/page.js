@@ -4,7 +4,7 @@ import Footer from '@/components/Portfolio/Footer'
 import AuthorLinks from '@/components/Portfolio/AuthorLinks'
 import { getPortfolioConfig } from '@/lib/portfolioConfig'
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic'
 
 export default async function About() {
     const data = await getPortfolioConfig()
