@@ -4,7 +4,6 @@ import Link from 'next/link'
 
 export default function Footer({ data }) {
   const currentYear = new Date().getFullYear()
-
   if (!data) return null;
 
   const navLinks = [
@@ -20,105 +19,147 @@ export default function Footer({ data }) {
   ]
 
   return (
-    <footer className="container" style={{
-      py: 'var(--spacing-lg)',
-      paddingTop: 'var(--spacing-xl)',
-      paddingBottom: 'var(--spacing-xl)',
-      borderTop: '1px solid var(--color-border)',
-      marginTop: 'var(--spacing-xl)'
-    }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 'var(--spacing-xl)',
-          marginBottom: 'var(--spacing-xl)',
-          paddingBottom: 'var(--spacing-xl)',
-          borderBottom: '1px solid var(--color-border)'
-        }}>
-          {/* Brand Section */}
-          <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: 'var(--spacing-sm)' }}>
-              {data.name || 'Your Name'}
-            </h3>
-            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: '1.6' }}>
-              {data.title || 'Developer'} crafting digital experiences with modern technologies.
-            </p>
+    <footer className="footer-root">
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-info">
+            <h3 className="footer-name">{data.name}</h3>
+            <p className="footer-summary">{data.title} crafting digital experiences.</p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-md)', letterSpacing: '0.1em' }}>
-              Quick Links
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gap: 'var(--spacing-xs)' }}>
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="hover-scale"
-                    style={{
-                      fontSize: '0.875rem',
-                      color: 'var(--color-text-secondary)',
-                      display: 'inline-block',
-                      transition: 'color var(--transition-fast), transform var(--transition-fast)'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = 'var(--color-text-primary)'}
-                    onMouseLeave={(e) => e.target.style.color = 'var(--color-text-secondary)'}
-                  >
+          <div className="footer-nav">
+            <div className="nav-group">
+              <span className="group-label">Pages</span>
+              <div className="tag-links">
+                {navLinks.map((link) => (
+                  <Link key={link.href} href={link.href} className="footer-tag-link">
                     {link.label}
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+                ))}
+              </div>
+            </div>
 
-          {/* Social Links */}
-          <div>
-            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-md)', letterSpacing: '0.1em' }}>
-              Connect
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover-scale"
-                  style={{
-                    color: 'var(--color-text-secondary)',
-                    fontSize: '0.875rem',
-                    transition: 'color var(--transition-fast), transform var(--transition-fast)'
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--color-accent)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--color-text-secondary)'}
-                >
-                  {social.name} →
-                </a>
-              ))}
+            <div className="nav-group">
+              <span className="group-label">Connect</span>
+              <div className="tag-links">
+                {socialLinks.map((social) => (
+                  <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="footer-tag-link">
+                    {social.name}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 'var(--spacing-md)',
-          fontSize: '0.75rem',
-          color: 'var(--color-text-secondary)'
-        }}>
-          <div>
-            © {currentYear} {data.name || 'Your Name'}. All rights reserved.
-          </div>
-          <div style={{ fontStyle: 'italic' }}>
-            Built with 🖤 using Next.js & Vanilla CSS
-          </div>
+        <div className="footer-legal">
+          <span>© {currentYear} {data.name}</span>
+          <span className="footer-divider">•</span>
+          <span>Built with Next.js</span>
         </div>
       </div>
+
+      <style jsx>{`
+        .footer-root {
+          padding: 3rem 0 2rem;
+          margin-top: 4rem;
+          border-top: 1px solid var(--color-border);
+          background-color: var(--color-bg);
+        }
+
+        .footer-grid {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 2rem;
+          margin-bottom: 2.5rem;
+        }
+
+        .footer-name {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .footer-summary {
+          font-size: 0.8125rem;
+          color: var(--color-text-secondary);
+          max-width: 200px;
+          line-height: 1.5;
+        }
+
+        .footer-nav {
+          display: flex;
+          gap: 3rem;
+        }
+
+        .nav-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .group-label {
+          font-size: 0.6875rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--color-text-muted);
+        }
+
+        .tag-links {
+          display: flex;
+          flex-direction: column;
+          gap: 0.375rem;
+        }
+
+        .footer-tag-link {
+          font-size: 0.8125rem;
+          color: var(--color-text-secondary);
+          transition: color var(--transition-fast);
+        }
+
+        .footer-tag-link:hover {
+          color: var(--color-text-primary);
+        }
+
+        .footer-legal {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.75rem;
+          color: var(--color-text-muted);
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--color-border);
+        }
+
+        .footer-divider {
+          opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+          .footer-grid {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2.5rem;
+          }
+
+          .footer-summary {
+            max-width: 100%;
+          }
+
+          .footer-nav {
+            width: 100%;
+            justify-content: space-evenly;
+            gap: 4rem;
+          }
+
+          .footer-legal {
+            justify-content: center;
+          }
+        }
+      `}</style>
     </footer>
   )
 }

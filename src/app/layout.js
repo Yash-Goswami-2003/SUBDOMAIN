@@ -2,6 +2,7 @@ import './globals.css'
 // import { Inter, Poppins, Playfair_Display } from 'next/font/google' // Disabled due to network timeouts
 import { getThemes } from '@/lib/themeData'
 import { ThemeProvider } from '@/context/ThemeContext'
+import StyledJsxRegistry from './registry'
 
 // Fallback fonts
 const inter = { className: 'font-sans' }
@@ -56,17 +57,19 @@ export default async function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="font-sans overflow-x-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
-        <ThemeProvider initialThemes={themes}>
-          {!isSubdomain && (
-            <>
-              <Navbar />
-              <div style={{ paddingTop: '80px' }}>
-                {children}
-              </div>
-            </>
-          )}
-          {isSubdomain && children}
-        </ThemeProvider>
+        <StyledJsxRegistry>
+          <ThemeProvider initialThemes={themes}>
+            {!isSubdomain && (
+              <>
+                <Navbar />
+                <div style={{ paddingTop: '80px' }}>
+                  {children}
+                </div>
+              </>
+            )}
+            {isSubdomain && children}
+          </ThemeProvider>
+        </StyledJsxRegistry>
       </body>
     </html>
   )

@@ -5,160 +5,39 @@ import Link from 'next/link'
 export default function FeaturedProject({ data }) {
     if (!data) return null;
 
-    // Get the first featured project or the first project
     const featuredProject = data.projects?.find(p => p.featured) || data.projects?.[0];
-
-    if (!featuredProject) {
-        return null; // No projects to display
-    }
+    if (!featuredProject) return null;
 
     return (
-        <section className="container" style={{
-            padding: 'var(--spacing-xl) 0',
-            marginBottom: 'var(--spacing-xl)'
-        }}>
-            {/* Section Header */}
-            <div className="animate-fade-in-up" style={{
-                textAlign: 'center',
-                marginBottom: 'var(--spacing-xl)',
-                maxWidth: '600px',
-                margin: '0 auto var(--spacing-xl)'
-            }}>
-                <h2 style={{
-                    fontSize: 'clamp(2rem, 5vw, 2.5rem)',
-                    fontWeight: '800',
-                    marginBottom: 'var(--spacing-sm)',
-                    color: 'var(--color-text-primary)'
-                }}>
-                    Featured Project
-                </h2>
-                <p style={{
-                    fontSize: '1rem',
-                    color: 'var(--color-text-secondary)',
-                    lineHeight: '1.6'
-                }}>
-                    A glimpse into my latest work
-                </p>
-                <Link
-                    href="/projects"
-                    className="hover-scale"
-                    style={{
-                        display: 'inline-block',
-                        marginTop: 'var(--spacing-md)',
-                        fontSize: '0.9rem',
-                        color: 'var(--color-accent)',
-                        textDecoration: 'none'
-                    }}
-                >
-                    View All Projects →
-                </Link>
-            </div>
+        <section className="featured">
+            <div className="container">
+                <div className="section-header">
+                    <h2 className="section-title">Featured Project</h2>
+                    <Link href="/projects" className="view-all">View all →</Link>
+                </div>
 
-            {/* Featured Project Card */}
-            <div className="card hover-lift animate-fade-in-up" style={{
-                maxWidth: '900px',
-                margin: '0 auto',
-                padding: 0,
-                overflow: 'hidden'
-            }}>
-                <div className="grid" style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: 0
-                }}>
-                    {/* Project Preview */}
-                    <div style={{
-                        minHeight: '300px',
-                        background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-border) 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative'
-                    }}>
-                        <span style={{
-                            position: 'absolute',
-                            top: 'var(--spacing-md)',
-                            left: 'var(--spacing-md)',
-                            padding: '0.35rem 0.75rem',
-                            backgroundColor: 'var(--color-accent)',
-                            color: 'var(--color-bg)',
-                            fontSize: '0.75rem',
-                            fontWeight: '600',
-                            borderRadius: 'var(--radius-sm)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em'
-                        }}>
-                            Featured
-                        </span>
-                        <span style={{ fontSize: '4rem', opacity: 0.5 }}>🚀</span>
+                <div className="project-card">
+                    <div className="project-preview">
+                        <span className="featured-badge">Featured</span>
                     </div>
 
-                    {/* Project Details */}
-                    <div style={{ padding: 'var(--spacing-xl)' }}>
-                        <h3 style={{
-                            fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
-                            fontWeight: '700',
-                            marginBottom: 'var(--spacing-md)',
-                            color: 'var(--color-text-primary)'
-                        }}>
-                            {featuredProject.title}
-                        </h3>
-
-                        <p style={{
-                            fontSize: '0.95rem',
-                            color: 'var(--color-text-secondary)',
-                            lineHeight: 1.7,
-                            marginBottom: 'var(--spacing-lg)'
-                        }}>
+                    <div className="project-content">
+                        <h3 className="project-title">{featuredProject.title}</h3>
+                        <p className="project-desc">
                             {featuredProject.longDescription || featuredProject.description}
                         </p>
 
-                        {/* Tech Stack */}
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 'var(--spacing-xs)',
-                            marginBottom: 'var(--spacing-xl)'
-                        }}>
+                        <div className="tech-stack">
                             {(featuredProject.technologies || []).map((tech, idx) => (
-                                <span
-                                    key={idx}
-                                    style={{
-                                        padding: '0.3rem 0.65rem',
-                                        fontSize: '0.75rem',
-                                        fontWeight: '500',
-                                        backgroundColor: 'var(--color-bg)',
-                                        color: 'var(--color-text-secondary)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        border: '1px solid var(--color-border)'
-                                    }}
-                                >
-                                    {tech}
-                                </span>
+                                <span key={idx} className="tech-tag">{tech}</span>
                             ))}
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex" style={{ gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
-                            <a
-                                href={featuredProject.liveUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="button"
-                            >
-                                View Live Demo
+                        <div className="project-actions">
+                            <a href={featuredProject.liveUrl} target="_blank" rel="noopener noreferrer" className="button">
+                                View Demo
                             </a>
-                            <a
-                                href={featuredProject.githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="button"
-                                style={{
-                                    backgroundColor: 'transparent',
-                                    color: 'var(--color-text-primary)',
-                                    border: '1px solid var(--color-border)'
-                                }}
-                            >
+                            <a href={featuredProject.githubUrl} target="_blank" rel="noopener noreferrer" className="button button-outline">
                                 Source Code
                             </a>
                         </div>
@@ -166,20 +45,112 @@ export default function FeaturedProject({ data }) {
                 </div>
             </div>
 
-            {/* View All Projects Link (Bottom) */}
-            <div style={{ textAlign: 'center', marginTop: 'var(--spacing-xl)' }}>
-                <Link
-                    href="/projects"
-                    className="hover-scale"
-                    style={{
-                        fontSize: '0.9rem',
-                        color: 'var(--color-accent)',
-                        textDecoration: 'none'
-                    }}
-                >
-                    View All Projects →
-                </Link>
-            </div>
+            <style jsx>{`
+                .featured {
+                    padding: 4rem 0;
+                }
+
+                .section-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.5rem;
+                }
+
+                .section-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                }
+
+                .view-all {
+                    font-size: 0.875rem;
+                    color: var(--color-text-secondary);
+                }
+
+                .view-all:hover {
+                    color: var(--color-text-primary);
+                }
+
+                .project-card {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    background-color: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    overflow: hidden;
+                }
+
+                .project-preview {
+                    background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-border) 100%);
+                    min-height: 280px;
+                    display: flex;
+                    align-items: flex-start;
+                    padding: 1rem;
+                }
+
+                .featured-badge {
+                    font-size: 0.6875rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    padding: 0.375rem 0.75rem;
+                    background-color: var(--color-accent);
+                    color: var(--color-bg);
+                    border-radius: var(--radius-sm);
+                }
+
+                .project-content {
+                    padding: 2rem;
+                }
+
+                .project-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    margin-bottom: 0.75rem;
+                }
+
+                .project-desc {
+                    font-size: 0.9375rem;
+                    color: var(--color-text-secondary);
+                    line-height: 1.7;
+                    margin-bottom: 1.25rem;
+                }
+
+                .tech-stack {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .tech-tag {
+                    font-size: 0.75rem;
+                    padding: 0.25rem 0.625rem;
+                    background-color: var(--color-bg);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-sm);
+                    color: var(--color-text-secondary);
+                }
+
+                .project-actions {
+                    display: flex;
+                    gap: 0.75rem;
+                }
+
+                @media (max-width: 768px) {
+                    .project-card {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .project-preview {
+                        min-height: 150px;
+                    }
+
+                    .project-actions {
+                        flex-direction: column;
+                    }
+                }
+            `}</style>
         </section>
     )
 }

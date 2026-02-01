@@ -7,7 +7,6 @@ export default function ContactPageClient({ data }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
     message: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -24,373 +23,90 @@ export default function ContactPageClient({ data }) {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false)
       setSubmitStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
-
+      setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setSubmitStatus(null), 5000)
     }, 1500)
   }
 
-  const socialLinks = [
-    { name: 'GitHub', url: data.social.github, icon: '💻' },
-    { name: 'LinkedIn', url: data.social.linkedin, icon: '👔' },
-    { name: 'Portfolio', url: data.social.portfolio, icon: '🌐' }
-  ]
-
   return (
-    <main className="page-transition">
-      {/* Contact Hero */}
-      <section className="container animate-fade-in-up" style={{
-        minHeight: '40vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: 'var(--spacing-xl) 0'
-      }}>
-        <h1 style={{
-          fontSize: 'clamp(2rem, 7vw, 3rem)',
-          fontWeight: '900',
-          letterSpacing: '-0.03em',
-          marginBottom: 'var(--spacing-md)',
-          color: 'var(--color-text-primary)'
-        }}>
-          Get In Touch
-        </h1>
-        <p style={{
-          fontSize: '1.05rem',
-          color: 'var(--color-text-secondary)',
-          maxWidth: '700px',
-          lineHeight: '1.6'
-        }}>
-          Have a project in mind or just want to chat? I'd love to hear from you.
-        </p>
+    <main className="contact-page">
+      <section className="contact-hero">
+        <div className="container">
+          <h1 className="page-title">Contact</h1>
+          <p className="page-subtitle">Get in touch for collaborations or questions.</p>
+        </div>
       </section>
 
-      {/* Contact Content */}
-      <section className="container" style={{
-        padding: 'var(--spacing-xl) 0',
-        marginBottom: 'var(--spacing-xl)'
-      }}>
-        <div className="grid" style={{
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 'var(--spacing-xl)',
-          alignItems: 'start'
-        }}>
-          {/* Contact Form */}
-          <div className="card" style={{ animation: 'fadeInUp 0.6s ease 0.1s both' }}>
-            <h2 style={{
-              fontSize: '1.75rem',
-              fontWeight: '700',
-              marginBottom: 'var(--spacing-lg)',
-              color: 'var(--color-text-primary)'
-            }}>
-              Send a Message
-            </h2>
-
-            <form onSubmit={handleSubmit} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--spacing-md)'
-            }}>
-              {/* Name Field */}
-              <div>
-                <label htmlFor="name" style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  marginBottom: 'var(--spacing-xs)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-sm) var(--spacing-md)',
-                    fontSize: '1rem',
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-sm)',
-                    transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-accent)'
-                    e.target.style.transform = 'translateY(-2px)'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--color-border)'
-                    e.target.style.transform = 'translateY(0)'
-                  }}
-                />
-              </div>
-
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  marginBottom: 'var(--spacing-xs)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-sm) var(--spacing-md)',
-                    fontSize: '1rem',
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-sm)',
-                    transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-accent)'
-                    e.target.style.transform = 'translateY(-2px)'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--color-border)'
-                    e.target.style.transform = 'translateY(0)'
-                  }}
-                />
-              </div>
-
-              {/* Subject Field */}
-              <div>
-                <label htmlFor="subject" style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  marginBottom: 'var(--spacing-xs)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-sm) var(--spacing-md)',
-                    fontSize: '1rem',
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-sm)',
-                    transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-accent)'
-                    e.target.style.transform = 'translateY(-2px)'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--color-border)'
-                    e.target.style.transform = 'translateY(0)'
-                  }}
-                />
-              </div>
-
-              {/* Message Field */}
-              <div>
-                <label htmlFor="message" style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  marginBottom: 'var(--spacing-xs)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  style={{
-                    width: '100%',
-                    padding: 'var(--spacing-sm) var(--spacing-md)',
-                    fontSize: '1rem',
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-sm)',
-                    transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
-                    outline: 'none',
-                    resize: 'vertical',
-                    fontFamily: 'inherit'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-accent)'
-                    e.target.style.transform = 'translateY(-2px)'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--color-border)'
-                    e.target.style.transform = 'translateY(0)'
-                  }}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="button"
-                style={{
-                  marginTop: 'var(--spacing-sm)',
-                  opacity: isSubmitting ? 0.6 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </button>
-
-              {/* Status Message */}
-              {submitStatus === 'success' && (
-                <div className="animate-fade-in" style={{
-                  padding: 'var(--spacing-md)',
-                  backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                  border: '1px solid rgba(76, 175, 80, 0.3)',
-                  borderRadius: 'var(--radius-sm)',
-                  color: 'rgb(76, 175, 80)',
-                  fontSize: '0.875rem',
-                  textAlign: 'center'
-                }}>
-                  ✓ Message sent successfully! I'll get back to you soon.
-                </div>
-              )}
-            </form>
-          </div>
-
-          {/* Contact Info & Social */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--spacing-lg)'
-          }}>
-            {/* Contact Info Card */}
-            <div className="card" style={{ animation: 'fadeInUp 0.6s ease 0.2s both' }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                marginBottom: 'var(--spacing-md)',
-                color: 'var(--color-text-primary)'
-              }}>
-                Contact Information
-              </h3>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--spacing-md)'
-              }}>
-                <div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-secondary)',
-                    marginBottom: 'var(--spacing-xs)'
-                  }}>
-                    Email
+      <section className="contact-content">
+        <div className="container">
+          <div className="contact-grid">
+            <div className="contact-form-card">
+              <form onSubmit={handleSubmit} className="contact-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
-                  <a
-                    href={`mailto:${data.email}`}
-                    style={{
-                      fontSize: '1rem',
-                      color: 'var(--color-text-primary)',
-                      textDecoration: 'underline'
-                    }}
-                  >
-                    {data.email}
-                  </a>
-                </div>
-                <div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-secondary)',
-                    marginBottom: 'var(--spacing-xs)'
-                  }}>
-                    Location
-                  </div>
-                  <div style={{
-                    fontSize: '1rem',
-                    color: 'var(--color-text-primary)'
-                  }}>
-                    {data.location}
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
                 </div>
-              </div>
+
+                <div className="form-group">
+                  <label htmlFor="message">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                  />
+                </div>
+
+                <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+
+                {submitStatus === 'success' && (
+                  <div className="success-msg">Message sent successfully!</div>
+                )}
+              </form>
             </div>
 
-            {/* Social Links Card */}
-            <div className="card" style={{ animation: 'fadeInUp 0.6s ease 0.3s both' }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                marginBottom: 'var(--spacing-md)',
-                color: 'var(--color-text-primary)'
-              }}>
-                Connect With Me
-              </h3>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: 'var(--spacing-sm)'
-              }}>
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover-lift"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 'var(--spacing-sm)',
-                      padding: 'var(--spacing-md)',
-                      backgroundColor: 'var(--color-surface)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-md)',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: 'var(--color-text-primary)',
-                      textDecoration: 'none',
-                      transition: 'all var(--transition-fast)'
-                    }}
-                  >
-                    <span style={{ fontSize: '1.5rem' }}>{social.icon}</span>
-                    <span>{social.name}</span>
-                  </a>
-                ))}
+            <div className="contact-info">
+              <div className="info-group">
+                <span className="info-label">Email</span>
+                <a href={`mailto:${data.email}`} className="info-value">{data.email}</a>
+              </div>
+              <div className="info-group">
+                <span className="info-label">Location</span>
+                <span className="info-value">{data.location}</span>
+              </div>
+              <div className="info-group">
+                <span className="info-label">Connect</span>
+                <div className="social-links">
+                  <a href={data.social.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+                  <a href={data.social.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
               </div>
             </div>
           </div>
@@ -398,7 +114,173 @@ export default function ContactPageClient({ data }) {
       </section>
 
       <Footer data={data} />
+
+      <style jsx>{`
+        .contact-page {
+          padding-top: 80px;
+        }
+
+        .contact-hero {
+          padding: 2rem 0 1rem;
+        }
+
+        .page-title {
+          font-size: 2rem;
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+        }
+
+        .page-subtitle {
+          font-size: 1rem;
+          color: var(--color-text-secondary);
+        }
+
+        .contact-content {
+          padding: 2rem 0 4rem;
+        }
+
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1.5fr 1fr;
+          gap: 3rem;
+          align-items: start;
+        }
+
+        .contact-form-card {
+          background-color: var(--color-surface);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+        }
+
+        .contact-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.375rem;
+        }
+
+        .form-group label {
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: var(--color-text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+          padding: 0.625rem 0.75rem;
+          font-size: 0.875rem;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-sm);
+          background-color: var(--color-bg);
+          color: var(--color-text-primary);
+          font-family: inherit;
+          outline: none;
+          transition: border-color var(--transition-fast);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+          border-color: var(--color-text-muted);
+        }
+
+        .form-group textarea {
+          resize: vertical;
+          min-height: 100px;
+        }
+
+        .submit-btn {
+          padding: 0.75rem 1.5rem;
+          background-color: var(--color-accent);
+          color: var(--color-bg);
+          border: none;
+          border-radius: var(--radius-sm);
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: opacity var(--transition-fast);
+          align-self: flex-start;
+        }
+
+        .submit-btn:hover {
+          opacity: 0.9;
+        }
+
+        .submit-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .success-msg {
+          padding: 0.75rem;
+          background-color: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          color: #16a34a;
+          border-radius: var(--radius-sm);
+          font-size: 0.8125rem;
+        }
+
+        .contact-info {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .info-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .info-label {
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: var(--color-text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .info-value {
+          font-size: 0.9375rem;
+          color: var(--color-text-primary);
+        }
+
+        .social-links {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .social-links a {
+          font-size: 0.875rem;
+          color: var(--color-text-secondary);
+        }
+
+        .social-links a:hover {
+          color: var(--color-text-primary);
+        }
+
+        @media (max-width: 768px) {
+          .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+          .form-row {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </main>
   )
 }
-

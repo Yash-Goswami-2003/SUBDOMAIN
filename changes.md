@@ -1,3 +1,8 @@
+## Fix
+- Re-implemented the UI and UX of the website.
+- Implemented clean and minimalistic design for the website. 
+- The next thing we have to do is refactor the code of our website to make it smooth and working. 
+
 ## Feature
 - Successfully implemented the mapping of the MongoDB documents' JSON configurations with the UI. 
 - We have to do a little rework for the strings that are not present in the document and are not mapped to the UI. 

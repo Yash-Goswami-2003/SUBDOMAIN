@@ -1,77 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Editor from '@monaco-editor/react';
 
-// SVG Icons as components for a clean look
 const Icons = {
     Dashboard: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-    ),
-    Projects: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-    ),
-    Skills: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-    ),
-    Settings: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-    ),
-    Logout: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-    ),
-    TrendUp: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
     ),
     Database: () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+    ),
+    Settings: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    ),
+    Logout: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+    ),
+    Menu: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     ),
     Close: () => (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    ),
-    Alert: () => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-    ),
-    Info: () => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
     )
-};
-
-const Modal = ({ isOpen, onClose, onConfirm, title, message, type = 'warning', confirmText = 'Confirm' }) => {
-    if (!isOpen) return null;
-    const isWarning = type === 'warning';
-    return (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease-out' }}>
-            <div style={{ backgroundColor: 'var(--color-surface)', padding: '2rem', borderRadius: 'var(--radius-lg)', maxWidth: '450px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', border: '1px solid var(--color-border)', animation: 'slideUp 0.3s ease-out' }} className="animate-fade-in-up">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                    <div style={{ padding: '0.75rem', borderRadius: '50%', backgroundColor: isWarning ? '#fef2f2' : '#f0fdf4' }}>
-                        {isWarning ? <Icons.Alert /> : <Icons.Info />}
-                    </div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '800' }}>{title}</h3>
-                </div>
-                <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: '1.5' }}>{message}</p>
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                    <button onClick={onClose} style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', backgroundColor: 'transparent', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
-                    <button onClick={() => { onConfirm(); onClose(); }} style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)', border: 'none', backgroundColor: isWarning ? '#ef4444' : '#10b981', color: 'white', fontWeight: '600', cursor: 'pointer' }}>{confirmText}</button>
-                </div>
-            </div>
-        </div>
-    );
 };
 
 export default function AdminDashboard() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('Overview');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    // Configuration Tab State
-    const [filterEditorValue, setFilterEditorValue] = useState('{\n  "documentType": "skill"\n}');
+    const [filterValue, setFilterValue] = useState('{\n  "documentType": "skill"\n}');
     const [method, setMethod] = useState('GET');
     const [editorValue, setEditorValue] = useState('[\n  \n]');
     const [status, setStatus] = useState({ message: '', type: '' });
-    const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [showModal, setShowModal] = useState(null);
 
     const handleLogout = async () => {
         try {
@@ -85,42 +47,25 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleConfigSubmit = async () => {
+    const handleSubmit = async () => {
         setStatus({ message: 'Processing...', type: 'info' });
         try {
-            let filter;
-            try {
-                filter = JSON.parse(filterEditorValue);
-            } catch (e) {
-                throw new Error('Invalid Filter JSON format');
-            }
+            let filter = JSON.parse(filterValue);
 
             if (method === 'GET') {
                 const res = await fetch(`/api/admin/documents?filter=${encodeURIComponent(JSON.stringify(filter))}`);
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || 'Failed to fetch documents');
-                }
+                if (!res.ok) throw new Error('Failed to fetch');
                 const data = await res.json();
                 setEditorValue(JSON.stringify(data, null, 2));
-                setStatus({ message: `Fetched ${data.length} documents matching the filter`, type: 'success' });
+                setStatus({ message: `Fetched ${data.length} documents`, type: 'success' });
             } else {
-                let documents;
-                try {
-                    documents = JSON.parse(editorValue);
-                } catch (e) {
-                    throw new Error('Invalid Editor JSON format');
-                }
-
+                let documents = JSON.parse(editorValue);
                 const res = await fetch('/api/admin/documents', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ documents, filter })
                 });
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || 'Failed to update documents');
-                }
+                if (!res.ok) throw new Error('Failed to update');
                 const result = await res.json();
                 setStatus({ message: result.message, type: 'success' });
             }
@@ -129,564 +74,606 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleRestoreConfirm = async () => {
+    const handleRestore = async () => {
         setStatus({ message: 'Restoring...', type: 'info' });
         try {
             const res = await fetch('/api/admin/restore', { method: 'POST' });
-            if (!res.ok) throw new Error('Failed to restore configuration');
+            if (!res.ok) throw new Error('Failed to restore');
             const result = await res.json();
             setStatus({ message: result.message, type: 'success' });
             setEditorValue('[\n  \n]');
-            setFilterEditorValue('{\n  "documentType": "skill"\n}');
         } catch (error) {
             setStatus({ message: error.message, type: 'error' });
         }
     };
 
-    const handleTabChange = (label) => {
-        setActiveTab(label);
-        setIsMobileMenuOpen(false);
-    };
-
-    const NavItem = ({ icon: Icon, label, mobile = false }) => (
-        <button
-            onClick={() => handleTabChange(label)}
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--spacing-md)',
-                padding: mobile ? '1rem 1.25rem' : '0.875rem 1rem',
-                width: '100%',
-                borderRadius: 'var(--radius-md)',
-                color: activeTab === label ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                backgroundColor: activeTab === label ? 'rgba(var(--color-accent-rgb, 0, 0, 0), 0.05)' : 'transparent',
-                border: activeTab === label ? '1px solid var(--color-border)' : '1px solid transparent',
-                transition: 'all 0.2s ease',
-                fontWeight: activeTab === label ? '600' : '400',
-                marginBottom: mobile ? '0.25rem' : '0.5rem',
-                fontSize: mobile ? '1rem' : '0.925rem'
-            }}
-            className="hover-lift"
-        >
-            <Icon />
-            <span>{label}</span>
-        </button>
-    );
-
-    const StatCard = ({ label, value, trend, delay }) => (
-        <div className="card stat-card animate-fade-in-up" style={{ animationDelay: delay, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {label}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: '800', lineHeight: '1' }}>{value}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#10b981', fontSize: '0.75rem', fontWeight: '600' }}>
-                    <Icons.TrendUp />
-                    <span>{trend}</span>
-                </div>
-            </div>
-        </div>
-    );
-
-    // Hamburger Menu Icon
-    const HamburgerIcon = () => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-    );
+    const navItems = [
+        { icon: Icons.Dashboard, label: 'Overview' },
+        { icon: Icons.Database, label: 'Configuration' },
+        { icon: Icons.Settings, label: 'Settings' }
+    ];
 
     return (
-        <div className="admin-container" style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
-            <Modal
-                isOpen={isRestoreModalOpen}
-                onClose={() => setIsRestoreModalOpen(false)}
-                onConfirm={handleRestoreConfirm}
-                title="Restore to Default"
-                message="Are you sure you want to proceed? This will clear all existing custom configurations and restore the website to its original default settings. This action cannot be undone."
-                type="warning"
-                confirmText="Confirm Restore"
-            />
-            <Modal
-                isOpen={isUpdateModalOpen}
-                onClose={() => setIsUpdateModalOpen(false)}
-                onConfirm={handleConfigSubmit}
-                title="Update Configuration"
-                message="Are you sure you want to update the configuration? This will replace all documents matching the current filter with the data in the editor."
-                type="info"
-                confirmText="Update"
-            />
-
-            {/* Mobile Overlay */}
-            {isMobileMenuOpen && (
-                <div
-                    className="mobile-overlay"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        zIndex: 99,
-                        backdropFilter: 'blur(4px)'
-                    }}
-                />
+        <div className="admin">
+            {showModal && (
+                <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <h3>{showModal === 'restore' ? 'Restore Default' : 'Update Data'}</h3>
+                        <p>{showModal === 'restore'
+                            ? 'This will reset all configurations. Continue?'
+                            : 'This will update documents matching the filter. Continue?'}
+                        </p>
+                        <div className="modal-actions">
+                            <button onClick={() => setShowModal(null)} className="modal-cancel">Cancel</button>
+                            <button onClick={() => { showModal === 'restore' ? handleRestore() : handleSubmit(); setShowModal(null); }} className="modal-confirm">
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
 
-            {/* Mobile Drawer */}
-            <div
-                className="mobile-drawer"
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: isMobileMenuOpen ? 0 : '-280px',
-                    width: '280px',
-                    height: '100vh',
-                    backgroundColor: 'var(--color-surface)',
-                    zIndex: 100,
-                    transition: 'left 0.3s ease',
-                    padding: '1.5rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderRight: '1px solid var(--color-border)'
-                }}
-            >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '1.1rem', fontWeight: '900', letterSpacing: '-0.03em' }}>
-                        ADMIN<span style={{ color: 'var(--color-accent)' }}>.PANEL</span>
-                    </h2>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        style={{ padding: '0.5rem', color: 'var(--color-text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
+            {isMobileMenuOpen && <div className="overlay" onClick={() => setIsMobileMenuOpen(false)} />}
+
+            <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
+                <div className="sidebar-header">
+                    <span className="logo">Admin</span>
+                    <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
                         <Icons.Close />
                     </button>
                 </div>
 
-                <nav style={{ flex: 1 }}>
-                    <NavItem icon={Icons.Dashboard} label="Overview" mobile />
-                    <NavItem icon={Icons.Projects} label="Projects" mobile />
-                    <NavItem icon={Icons.Skills} label="Skills" mobile />
-                    <NavItem icon={Icons.Database} label="Configuration" mobile />
-                    <NavItem icon={Icons.Settings} label="Settings" mobile />
+                <nav className="sidebar-nav">
+                    {navItems.map(({ icon: Icon, label }) => (
+                        <button
+                            key={label}
+                            onClick={() => { setActiveTab(label); setIsMobileMenuOpen(false); }}
+                            className={`nav-item ${activeTab === label ? 'active' : ''}`}
+                        >
+                            <Icon />
+                            <span>{label}</span>
+                        </button>
+                    ))}
                 </nav>
 
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 'var(--spacing-md)',
-                        padding: '1rem 1.25rem',
-                        width: '100%',
-                        borderRadius: 'var(--radius-md)',
-                        color: '#ef4444',
-                        border: '1px solid transparent',
-                        background: 'none',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        fontWeight: '600'
-                    }}
-                >
+                <button onClick={handleLogout} className="logout-btn">
                     <Icons.Logout />
                     <span>Logout</span>
                 </button>
-            </div>
-
-            {/* Desktop Sidebar */}
-            <aside className="desktop-sidebar" style={{
-                width: '260px',
-                borderRight: '1px solid var(--color-border)',
-                padding: '2rem 1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'sticky',
-                top: 0,
-                height: '100vh',
-                backgroundColor: 'var(--color-surface)',
-                zIndex: 50
-            }}>
-                <div style={{ marginBottom: '3rem' }}>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: '900', letterSpacing: '-0.03em' }}>
-                        ADMIN<span style={{ color: 'var(--color-accent)' }}>.PANEL</span>
-                    </h2>
-                </div>
-
-                <nav style={{ flex: 1 }}>
-                    <NavItem icon={Icons.Dashboard} label="Overview" />
-                    <NavItem icon={Icons.Projects} label="Projects" />
-                    <NavItem icon={Icons.Skills} label="Skills" />
-                    <NavItem icon={Icons.Database} label="Configuration" />
-                    <NavItem icon={Icons.Settings} label="Settings" />
-                </nav>
-
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 'var(--spacing-md)',
-                        padding: '0.875rem 1rem',
-                        width: '100%',
-                        borderRadius: 'var(--radius-md)',
-                        color: '#ef4444',
-                        border: '1px solid transparent',
-                        marginTop: '2rem',
-                        background: 'none',
-                        cursor: 'pointer'
-                    }}
-                    className="hover-lift"
-                >
-                    <Icons.Logout />
-                    <span style={{ fontSize: '0.925rem', fontWeight: '600' }}>Logout</span>
-                </button>
             </aside>
 
-            {/* Main Content */}
-            <main className="main-content" style={{ flex: 1, padding: '1.5rem', overflowY: 'auto' }}>
-                {/* Mobile Header */}
-                <header className="mobile-header" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', padding: '0.5rem 0' }}>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        style={{ padding: '0.5rem', color: 'var(--color-text)', background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
-                        <HamburgerIcon />
+            <main className="main">
+                <header className="topbar">
+                    <button className="menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+                        <Icons.Menu />
                     </button>
-                    <h2 style={{ fontSize: '1rem', fontWeight: '800' }}>
-                        ADMIN<span style={{ color: 'var(--color-accent)' }}>.PANEL</span>
-                    </h2>
-                    <div style={{ width: '40px' }}></div>
+                    <h1 className="page-title">{activeTab}</h1>
                 </header>
 
-                {/* Desktop Header */}
-                <header className="desktop-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <div>
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.25rem' }}>{activeTab}</h1>
-                        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>Welcome back, Yash! Here's what's happening today.</p>
-                    </div>
-                </header>
-
-                {activeTab === 'Overview' && (
-                    <>
-                        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                            <StatCard label="Total Projects" value="14" trend="+2 this month" delay="0s" />
-                            <StatCard label="Live Sites" value="3" trend="Stable" delay="0.1s" />
-                            <StatCard label="Total Skills" value="28" trend="+4 new" delay="0.2s" />
-                            <StatCard label="Visitor Count" value="1.2k" trend="+12%" delay="0.3s" />
-                        </div>
-
-                        <div className="overview-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-                            <section className="card" style={{ padding: '0' }}>
-                                <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <h3 style={{ fontSize: '1rem', fontWeight: '700' }}>Recent Projects</h3>
-                                    <button style={{ color: 'var(--color-accent)', fontSize: '0.8rem', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>View All</button>
+                <div className="content">
+                    {activeTab === 'Overview' && (
+                        <div className="overview">
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <span className="stat-label">Projects</span>
+                                    <span className="stat-value">14</span>
                                 </div>
-                                <div style={{ padding: '0.75rem' }}>
-                                    {[
-                                        { name: 'Portfolio Site', status: 'Live', date: 'Oct 12' },
-                                        { name: 'Admin Dashboard', status: 'Building', date: 'Oct 15' },
-                                        { name: 'E-commerce UI', status: 'Completed', date: 'Oct 08' }
-                                    ].map((proj, i) => (
-                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.875rem', borderRadius: 'var(--radius-sm)', borderBottom: i === 2 ? 'none' : '1px solid var(--color-border)' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>{proj.name}</span>
-                                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Modified {proj.date}</span>
-                                            </div>
-                                            <span style={{ fontSize: '0.7rem', fontWeight: '700', padding: '0.2rem 0.5rem', borderRadius: '20px', backgroundColor: proj.status === 'Live' ? '#dcfce7' : proj.status === 'Building' ? '#fef9c3' : '#f1f5f9', color: proj.status === 'Live' ? '#166534' : proj.status === 'Building' ? '#854d0e' : '#475569' }}>{proj.status}</span>
+                                <div className="stat-card">
+                                    <span className="stat-label">Skills</span>
+                                    <span className="stat-value">28</span>
+                                </div>
+                                <div className="stat-card">
+                                    <span className="stat-label">Live Sites</span>
+                                    <span className="stat-value">3</span>
+                                </div>
+                            </div>
+
+                            <div className="recent-activity">
+                                <h3>Recent Activity</h3>
+                                <div className="activity-list">
+                                    <div className="activity-item">
+                                        <span className="activity-dot"></span>
+                                        <div>
+                                            <span className="activity-text">Updated skills data</span>
+                                            <span className="activity-time">2 hours ago</span>
                                         </div>
-                                    ))}
-                                </div>
-                            </section>
-
-                            <section className="card" style={{ padding: '1.25rem' }}>
-                                <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1.25rem' }}>Activity</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                    {[
-                                        { action: 'Updated Skill: Next.js', time: '2h ago' },
-                                        { action: 'New login detected', time: '5h ago' },
-                                        { action: 'Deleted draft project', time: '1d ago' }
-                                    ].map((item, i) => (
-                                        <div key={i} style={{ display: 'flex', gap: '0.75rem', position: 'relative' }}>
-                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-accent)', marginTop: '5px', flexShrink: 0 }} />
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>{item.action}</span>
-                                                <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{item.time}</span>
-                                            </div>
+                                    </div>
+                                    <div className="activity-item">
+                                        <span className="activity-dot"></span>
+                                        <div>
+                                            <span className="activity-text">New project added</span>
+                                            <span className="activity-time">Yesterday</span>
                                         </div>
-                                    ))}
-                                </div>
-                            </section>
-                        </div>
-                    </>
-                )}
-
-                {activeTab === 'Configuration' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {/* Controls Bar */}
-                        <div className="card" style={{ padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                            {/* Method Toggle */}
-                            <div style={{ display: 'flex', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-                                <button
-                                    onClick={() => setMethod('GET')}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        fontWeight: '600',
-                                        fontSize: '0.8rem',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        backgroundColor: method === 'GET' ? 'var(--color-accent)' : 'var(--color-surface)',
-                                        color: method === 'GET' ? 'white' : 'var(--color-text-secondary)',
-                                        transition: 'all 0.15s ease'
-                                    }}
-                                >
-                                    GET
-                                </button>
-                                <button
-                                    onClick={() => setMethod('POST')}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        fontWeight: '600',
-                                        fontSize: '0.8rem',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        backgroundColor: method === 'POST' ? '#10b981' : 'var(--color-surface)',
-                                        color: method === 'POST' ? 'white' : 'var(--color-text-secondary)',
-                                        transition: 'all 0.15s ease'
-                                    }}
-                                >
-                                    POST
-                                </button>
-                            </div>
-
-                            <div style={{ flex: 1 }}></div>
-
-                            {/* Action Buttons */}
-                            <button
-                                onClick={() => method === 'GET' ? handleConfigSubmit() : setIsUpdateModalOpen(true)}
-                                style={{
-                                    padding: '0.5rem 1.25rem',
-                                    backgroundColor: method === 'GET' ? 'var(--color-accent)' : '#10b981',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: 'var(--radius-md)',
-                                    fontWeight: '600',
-                                    fontSize: '0.8rem',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.35rem',
-                                    transition: 'all 0.15s ease'
-                                }}
-                            >
-                                {method === 'GET' ? '▶ Fetch' : '▲ Update'}
-                            </button>
-
-                            <button
-                                onClick={() => setIsRestoreModalOpen(true)}
-                                style={{
-                                    padding: '0.5rem 0.875rem',
-                                    backgroundColor: 'transparent',
-                                    color: '#ef4444',
-                                    border: '1px solid #fecaca',
-                                    borderRadius: 'var(--radius-md)',
-                                    fontWeight: '500',
-                                    fontSize: '0.75rem',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.15s ease'
-                                }}
-                            >
-                                Reset All
-                            </button>
-                        </div>
-
-                        {/* Status Message */}
-                        {status.message && (
-                            <div style={{
-                                padding: '0.65rem 0.875rem',
-                                borderRadius: 'var(--radius-md)',
-                                fontSize: '0.8rem',
-                                fontWeight: '500',
-                                backgroundColor: status.type === 'error' ? '#fef2f2' : status.type === 'success' ? '#f0fdf4' : '#eff6ff',
-                                color: status.type === 'error' ? '#dc2626' : status.type === 'success' ? '#16a34a' : '#2563eb',
-                                border: `1px solid ${status.type === 'error' ? '#fecaca' : status.type === 'success' ? '#bbf7d0' : '#bfdbfe'}`,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem'
-                            }}>
-                                <span style={{ fontSize: '0.9rem' }}>{status.type === 'error' ? '✕' : status.type === 'success' ? '✓' : '○'}</span>
-                                {status.message}
-                            </div>
-                        )}
-
-                        {/* Filter Editor - Proper Card */}
-                        <div className="card filter-editor-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-                            <div style={{
-                                padding: '0.6rem 0.875rem',
-                                backgroundColor: '#1e1e1e',
-                                borderBottom: '1px solid #333',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                    <div style={{ display: 'flex', gap: '0.3rem' }}>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444' }}></span>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#eab308' }}></span>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
                                     </div>
-                                    <span style={{ fontWeight: '600', fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }}>filter.json</span>
                                 </div>
-                                <span style={{
-                                    fontSize: '0.65rem',
-                                    padding: '0.15rem 0.5rem',
-                                    borderRadius: '4px',
-                                    backgroundColor: 'rgba(168,85,247,0.2)',
-                                    color: '#c084fc',
-                                    fontWeight: '600',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.05em'
-                                }}>
-                                    Query
-                                </span>
-                            </div>
-                            <div className="filter-editor-container" style={{ height: '120px' }}>
-                                <Editor
-                                    height="100%"
-                                    defaultLanguage="json"
-                                    value={filterEditorValue}
-                                    onChange={(value) => setFilterEditorValue(value)}
-                                    theme="vs-dark"
-                                    options={{
-                                        minimap: { enabled: false },
-                                        fontSize: 13,
-                                        scrollBeyondLastLine: false,
-                                        lineNumbers: 'on',
-                                        glyphMargin: false,
-                                        folding: false,
-                                        lineDecorationsWidth: 0,
-                                        lineNumbersMinChars: 3,
-                                        automaticLayout: true,
-                                        scrollbar: { vertical: 'auto', horizontal: 'auto' },
-                                        overviewRulerLanes: 0,
-                                        hideCursorInOverviewRuler: true,
-                                        overviewRulerBorder: false,
-                                        renderLineHighlight: 'line',
-                                        wordWrap: 'on',
-                                        padding: { top: 12, bottom: 12 },
-                                        fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-                                        lineHeight: 20,
-                                    }}
-                                />
                             </div>
                         </div>
+                    )}
 
-                        {/* Editor */}
-                        <div className="card editor-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--color-border)', flex: 1 }}>
-                            <div style={{
-                                padding: '0.6rem 0.875rem',
-                                backgroundColor: '#1e1e1e',
-                                borderBottom: '1px solid #333',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                    <div style={{ display: 'flex', gap: '0.3rem' }}>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444' }}></span>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#eab308' }}></span>
-                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
-                                    </div>
-                                    <span style={{ fontWeight: '600', fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }}>response.json</span>
+                    {activeTab === 'Configuration' && (
+                        <div className="config">
+                            <div className="config-controls">
+                                <div className="method-toggle">
+                                    <button onClick={() => setMethod('GET')} className={method === 'GET' ? 'active' : ''}>GET</button>
+                                    <button onClick={() => setMethod('POST')} className={method === 'POST' ? 'active' : ''}>POST</button>
                                 </div>
-                                <span style={{
-                                    fontSize: '0.65rem',
-                                    padding: '0.15rem 0.4rem',
-                                    borderRadius: '4px',
-                                    backgroundColor: method === 'GET' ? 'rgba(59,130,246,0.2)' : 'rgba(34,197,94,0.2)',
-                                    color: method === 'GET' ? '#60a5fa' : '#4ade80',
-                                    fontWeight: '600',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.05em'
-                                }}>
-                                    {method === 'GET' ? 'Read Only' : 'Editable'}
-                                </span>
+                                <div className="config-actions">
+                                    <button onClick={() => method === 'GET' ? handleSubmit() : setShowModal('update')} className="action-btn primary">
+                                        {method === 'GET' ? 'Fetch' : 'Update'}
+                                    </button>
+                                    <button onClick={() => setShowModal('restore')} className="action-btn danger">Reset</button>
+                                </div>
                             </div>
-                            <div className="editor-container" style={{ height: 'calc(100vh - 380px)', minHeight: '300px' }}>
-                                <Editor
-                                    height="100%"
-                                    defaultLanguage="json"
-                                    value={editorValue}
-                                    onChange={(value) => setEditorValue(value)}
-                                    theme="vs-dark"
-                                    options={{
-                                        minimap: { enabled: false },
-                                        fontSize: 13,
-                                        readOnly: method === 'GET',
-                                        scrollBeyondLastLine: false,
-                                        automaticLayout: true,
-                                        padding: { top: 12, bottom: 12 },
-                                        lineHeight: 20,
-                                        fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-                                        renderLineHighlight: 'all',
-                                        cursorBlinking: 'smooth',
-                                    }}
-                                />
+
+                            {status.message && (
+                                <div className={`status-message ${status.type}`}>{status.message}</div>
+                            )}
+
+                            <div className="editor-section">
+                                <div className="editor-header">
+                                    <span className="editor-title">Filter</span>
+                                </div>
+                                <div className="editor-wrapper filter">
+                                    <Editor
+                                        height="100%"
+                                        defaultLanguage="json"
+                                        value={filterValue}
+                                        onChange={setFilterValue}
+                                        theme="vs-dark"
+                                        options={{
+                                            minimap: { enabled: false },
+                                            fontSize: 13,
+                                            scrollBeyondLastLine: false,
+                                            automaticLayout: true,
+                                            lineNumbers: 'on',
+                                            padding: { top: 10, bottom: 10 }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="editor-section">
+                                <div className="editor-header">
+                                    <span className="editor-title">Data</span>
+                                    <span className={`editor-mode ${method}`}>{method === 'GET' ? 'Read Only' : 'Editable'}</span>
+                                </div>
+                                <div className="editor-wrapper main">
+                                    <Editor
+                                        height="100%"
+                                        defaultLanguage="json"
+                                        value={editorValue}
+                                        onChange={setEditorValue}
+                                        theme="vs-dark"
+                                        options={{
+                                            minimap: { enabled: false },
+                                            fontSize: 13,
+                                            readOnly: method === 'GET',
+                                            scrollBeyondLastLine: false,
+                                            automaticLayout: true,
+                                            padding: { top: 10, bottom: 10 }
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {activeTab !== 'Overview' && activeTab !== 'Configuration' && (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-                        <p style={{ color: 'var(--color-text-secondary)' }}>{activeTab} module is coming soon...</p>
-                    </div>
-                )}
+                    {activeTab === 'Settings' && (
+                        <div className="placeholder">
+                            <p>Settings coming soon...</p>
+                        </div>
+                    )}
+                </div>
             </main>
 
             <style jsx>{`
-                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-                
-                /* Desktop First - Default styles are for desktop */
-                .desktop-sidebar { display: flex; }
-                .mobile-header { display: none !important; }
-                .mobile-drawer { display: none; }
-                .mobile-overlay { display: none; }
-                .main-content { padding: 2rem 2.5rem !important; }
-                .overview-grid { grid-template-columns: 2fr 1fr !important; }
-                .filter-editor-container { height: 120px !important; }
-                .editor-container { height: calc(100vh - 500px) !important; min-height: 300px !important; }
-                
-                /* Tablet - 1024px and below */
-                @media (max-width: 1024px) {
-                    .desktop-sidebar { display: none !important; }
-                    .mobile-header { display: flex !important; }
-                    .mobile-drawer { display: flex !important; }
-                    .mobile-overlay { display: block !important; }
-                    .main-content { padding: 1rem !important; }
-                    .overview-grid { grid-template-columns: 1fr !important; }
-                    .desktop-header { display: none !important; }
-                    .filter-editor-container { height: 100px !important; }
-                    .editor-container { height: calc(100vh - 420px) !important; min-height: 280px !important; }
+                .admin {
+                    display: flex;
+                    min-height: 100vh;
+                    background-color: var(--color-bg);
                 }
-                
-                /* Mobile - 640px and below */
-                @media (max-width: 640px) {
-                    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; }
-                    .stat-card { padding: 1rem !important; }
-                    .stat-card span:first-child { font-size: 0.65rem !important; }
-                    .stat-card span:last-child { font-size: 1.25rem !important; }
-                    .filter-editor-container { height: 90px !important; }
-                    .editor-container { height: 45vh !important; min-height: 220px !important; }
+
+                .sidebar {
+                    width: 220px;
+                    background-color: var(--color-surface);
+                    border-right: 1px solid var(--color-border);
+                    display: flex;
+                    flex-direction: column;
+                    padding: 1.25rem;
+                    position: sticky;
+                    top: 0;
+                    height: 100vh;
                 }
-                
-                /* Extra small - 400px and below */
-                @media (max-width: 400px) {
-                    .stats-grid { grid-template-columns: 1fr !important; }
-                    .filter-editor-container { height: 80px !important; }
+
+                .sidebar-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.5rem;
+                }
+
+                .logo {
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+                .close-btn {
+                    display: none;
+                    padding: 0.25rem;
+                    color: var(--color-text-secondary);
+                }
+
+                .sidebar-nav {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                }
+
+                .nav-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.625rem 0.75rem;
+                    border-radius: var(--radius-sm);
+                    font-size: 0.875rem;
+                    color: var(--color-text-secondary);
+                    transition: all var(--transition-fast);
+                }
+
+                .nav-item:hover {
+                    background-color: var(--color-bg);
+                }
+
+                .nav-item.active {
+                    color: var(--color-text-primary);
+                    background-color: var(--color-bg);
+                    font-weight: 500;
+                }
+
+                .logout-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.625rem 0.75rem;
+                    font-size: 0.875rem;
+                    color: #ef4444;
+                    margin-top: 1rem;
+                }
+
+                .main {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+
+                .topbar {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1rem 1.5rem;
+                    border-bottom: 1px solid var(--color-border);
+                }
+
+                .menu-btn {
+                    display: none;
+                    padding: 0.25rem;
+                    color: var(--color-text-primary);
+                }
+
+                .page-title {
+                    font-size: 1.125rem;
+                    font-weight: 600;
+                }
+
+                .content {
+                    flex: 1;
+                    padding: 1.5rem;
+                    overflow-y: auto;
+                }
+
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .stat-card {
+                    padding: 1.25rem;
+                    background-color: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                }
+
+                .stat-label {
+                    display: block;
+                    font-size: 0.75rem;
+                    color: var(--color-text-muted);
+                    margin-bottom: 0.25rem;
+                }
+
+                .stat-value {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                }
+
+                .recent-activity {
+                    padding: 1.25rem;
+                    background-color: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                }
+
+                .recent-activity h3 {
+                    font-size: 0.9375rem;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                }
+
+                .activity-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .activity-item {
+                    display: flex;
+                    gap: 0.75rem;
+                }
+
+                .activity-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background-color: var(--color-accent);
+                    margin-top: 6px;
+                }
+
+                .activity-text {
+                    display: block;
+                    font-size: 0.875rem;
+                }
+
+                .activity-time {
+                    display: block;
+                    font-size: 0.75rem;
+                    color: var(--color-text-muted);
+                }
+
+                .config {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .config-controls {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    flex-wrap: wrap;
+                }
+
+                .method-toggle {
+                    display: flex;
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-sm);
+                    overflow: hidden;
+                }
+
+                .method-toggle button {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    background-color: var(--color-surface);
+                    color: var(--color-text-secondary);
+                    transition: all var(--transition-fast);
+                }
+
+                .method-toggle button.active {
+                    background-color: var(--color-accent);
+                    color: var(--color-bg);
+                }
+
+                .config-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-left: auto;
+                }
+
+                .action-btn {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    border-radius: var(--radius-sm);
+                    transition: opacity var(--transition-fast);
+                }
+
+                .action-btn.primary {
+                    background-color: var(--color-accent);
+                    color: var(--color-bg);
+                }
+
+                .action-btn.danger {
+                    background-color: transparent;
+                    border: 1px solid #fecaca;
+                    color: #ef4444;
+                }
+
+                .status-message {
+                    padding: 0.625rem 0.875rem;
+                    border-radius: var(--radius-sm);
+                    font-size: 0.8125rem;
+                }
+
+                .status-message.success {
+                    background-color: #f0fdf4;
+                    color: #16a34a;
+                    border: 1px solid #bbf7d0;
+                }
+
+                .status-message.error {
+                    background-color: #fef2f2;
+                    color: #dc2626;
+                    border: 1px solid #fecaca;
+                }
+
+                .status-message.info {
+                    background-color: #eff6ff;
+                    color: #2563eb;
+                    border: 1px solid #bfdbfe;
+                }
+
+                .editor-section {
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    overflow: hidden;
+                }
+
+                .editor-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 0.5rem 0.75rem;
+                    background-color: #1e1e1e;
+                    border-bottom: 1px solid #333;
+                }
+
+                .editor-title {
+                    font-size: 0.75rem;
+                    color: #9ca3af;
+                    font-family: monospace;
+                }
+
+                .editor-mode {
+                    font-size: 0.625rem;
+                    padding: 0.125rem 0.375rem;
+                    border-radius: 3px;
+                    text-transform: uppercase;
+                }
+
+                .editor-mode.GET {
+                    background-color: rgba(59,130,246,0.2);
+                    color: #60a5fa;
+                }
+
+                .editor-mode.POST {
+                    background-color: rgba(34,197,94,0.2);
+                    color: #4ade80;
+                }
+
+                .editor-wrapper.filter {
+                    height: 100px;
+                }
+
+                .editor-wrapper.main {
+                    height: calc(100vh - 420px);
+                    min-height: 250px;
+                }
+
+                .placeholder {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 200px;
+                    color: var(--color-text-muted);
+                }
+
+                .overlay {
+                    position: fixed;
+                    inset: 0;
+                    background-color: rgba(0,0,0,0.5);
+                    z-index: 99;
+                }
+
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                }
+
+                .modal {
+                    background-color: var(--color-surface);
+                    padding: 1.5rem;
+                    border-radius: var(--radius-md);
+                    border: 1px solid var(--color-border);
+                    max-width: 360px;
+                    width: 90%;
+                }
+
+                .modal h3 {
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin-bottom: 0.5rem;
+                }
+
+                .modal p {
+                    font-size: 0.875rem;
+                    color: var(--color-text-secondary);
+                    margin-bottom: 1.25rem;
+                }
+
+                .modal-actions {
+                    display: flex;
+                    gap: 0.75rem;
+                    justify-content: flex-end;
+                }
+
+                .modal-cancel {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.8125rem;
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-sm);
+                }
+
+                .modal-confirm {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.8125rem;
+                    background-color: var(--color-accent);
+                    color: var(--color-bg);
+                    border-radius: var(--radius-sm);
+                }
+
+                @media (max-width: 768px) {
+                    .sidebar {
+                        position: fixed;
+                        left: -260px;
+                        top: 0;
+                        z-index: 100;
+                        width: 260px;
+                        transition: left 0.2s ease;
+                    }
+
+                    .sidebar.open {
+                        left: 0;
+                    }
+
+                    .close-btn {
+                        display: block;
+                    }
+
+                    .menu-btn {
+                        display: block;
+                    }
+
+                    .stats-grid {
+                        grid-template-columns: 1fr 1fr;
+                    }
+
+                    .editor-wrapper.main {
+                        height: 300px;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .stats-grid {
+                        grid-template-columns: 1fr;
+                    }
                 }
             `}</style>
         </div>

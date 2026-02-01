@@ -13,221 +13,224 @@ export default function ProjectsPageClient({ data }) {
     : data.projects.filter(p => p.category === activeFilter)
 
   return (
-    <main className="page-transition">
-      {/* Projects Hero */}
-      <section className="container animate-fade-in-up" style={{
-        minHeight: '40vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: 'var(--spacing-xl) 0'
-      }}>
-        <h1 style={{
-          fontSize: 'clamp(2rem, 7vw, 3rem)',
-          fontWeight: '900',
-          letterSpacing: '-0.03em',
-          marginBottom: 'var(--spacing-md)',
-          color: 'var(--color-text-primary)'
-        }}>
-          My Projects
-        </h1>
-        <p style={{
-          fontSize: '1.05rem',
-          color: 'var(--color-text-secondary)',
-          maxWidth: '700px',
-          lineHeight: '1.6'
-        }}>
-          A collection of projects I've worked on, showcasing my skills and passion for building great software.
-        </p>
-      </section>
-
-      {/* Filter Buttons */}
-      <section className="container" style={{
-        padding: 'var(--spacing-lg) 0',
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 'var(--spacing-sm)',
-        flexWrap: 'wrap'
-      }}>
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveFilter(category)}
-            className="hover-scale"
-            style={{
-              padding: '0.5rem 1.5rem',
-              borderRadius: 'var(--radius-lg)',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              backgroundColor: activeFilter === category ? 'var(--color-accent)' : 'var(--color-surface)',
-              color: activeFilter === category ? 'var(--color-bg)' : 'var(--color-text-primary)',
-              border: `1px solid ${activeFilter === category ? 'var(--color-accent)' : 'var(--color-border)'}`,
-              transition: 'all var(--transition-fast)',
-              cursor: 'pointer'
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </section>
-
-      {/* Projects Grid */}
-      <section className="container" style={{
-        padding: 'var(--spacing-xl) 0',
-        marginBottom: 'var(--spacing-xl)'
-      }}>
-        <div className="grid" style={{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: 'var(--spacing-xl)'
-        }}>
-          {filteredProjects.map((project, index) => (
-            <article
-              key={project.id}
-              className="card hover-lift"
-              style={{
-                overflow: 'hidden',
-                padding: 0,
-                animation: `fadeInUp 0.5s ease ${index * 0.1}s both`
-              }}
-            >
-              {/* Project Image Placeholder */}
-              <div style={{
-                height: '200px',
-                background: `linear-gradient(135deg, var(--color-surface) 0%, var(--color-border) 100%)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '3rem',
-                color: 'var(--color-text-secondary)',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'var(--color-surface)',
-                  opacity: 0,
-                  transition: 'opacity var(--transition-base)'
-                }} />
-                {project.featured && (
-                  <span style={{
-                    position: 'absolute',
-                    top: 'var(--spacing-md)',
-                    right: 'var(--spacing-md)',
-                    padding: '0.25rem 0.75rem',
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-bg)',
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    borderRadius: 'var(--radius-sm)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
-                    Featured
-                  </span>
-                )}
-                📱
-              </div>
-
-              {/* Project Content */}
-              <div style={{ padding: 'var(--spacing-lg)' }}>
-                <h3 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  marginBottom: 'var(--spacing-sm)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  {project.title}
-                </h3>
-
-                <p style={{
-                  fontSize: '0.95rem',
-                  color: 'var(--color-text-secondary)',
-                  lineHeight: '1.6',
-                  marginBottom: 'var(--spacing-md)'
-                }}>
-                  {project.description}
-                </p>
-
-                {/* Technologies */}
-                <div style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 'var(--spacing-xs)',
-                  marginBottom: 'var(--spacing-md)'
-                }}>
-                  {project.technologies.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        padding: '0.25rem 0.5rem',
-                        fontSize: '0.75rem',
-                        backgroundColor: 'var(--color-surface)',
-                        color: 'var(--color-text-secondary)',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--color-border)'
-                      }}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Links */}
-                <div className="flex" style={{
-                  gap: 'var(--spacing-sm)',
-                  marginTop: 'auto'
-                }}>
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="button"
-                    style={{
-                      flex: 1,
-                      fontSize: '0.875rem',
-                      padding: '0.5rem 1rem'
-                    }}
-                  >
-                    Live Demo
-                  </a>
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="button hover-scale"
-                    style={{
-                      flex: 1,
-                      fontSize: '0.875rem',
-                      padding: '0.5rem 1rem',
-                      backgroundColor: 'transparent',
-                      color: 'var(--color-text-primary)',
-                      border: '1px solid var(--color-border)'
-                    }}
-                  >
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
+    <main className="projects-page">
+      <section className="projects-header">
+        <div className="container">
+          <h1 className="page-title">Projects</h1>
+          <p className="page-subtitle">
+            A collection of work I've built and contributed to.
+          </p>
         </div>
+      </section>
 
-        {filteredProjects.length === 0 && (
-          <div style={{
-            textAlign: 'center',
-            padding: 'var(--spacing-xl)',
-            color: 'var(--color-text-secondary)'
-          }}>
-            No projects found in this category.
+      <section className="filter-section">
+        <div className="container">
+          <div className="filters">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveFilter(category)}
+                className={`filter-btn ${activeFilter === category ? 'active' : ''}`}
+              >
+                {category}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
+      </section>
+
+      <section className="projects-grid-section">
+        <div className="container">
+          <div className="projects-grid">
+            {filteredProjects.map((project) => (
+              <article key={project.id} className="project-card">
+                <div className="project-preview">
+                  {project.featured && <span className="featured-tag">Featured</span>}
+                </div>
+
+                <div className="project-content">
+                  <h3 className="project-title">{project.title}</h3>
+                  <p className="project-desc">{project.description}</p>
+
+                  <div className="tech-list">
+                    {project.technologies.map((tech, idx) => (
+                      <span key={idx} className="tech-tag">{tech}</span>
+                    ))}
+                  </div>
+
+                  <div className="project-links">
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="button">
+                      Demo
+                    </a>
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="button button-outline">
+                      Code
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {filteredProjects.length === 0 && (
+            <p className="empty-state">No projects found in this category.</p>
+          )}
+        </div>
       </section>
 
       <Footer data={data} />
+
+      <style jsx>{`
+        .projects-page {
+          padding-top: 80px;
+        }
+
+        .projects-header {
+          padding: 3rem 0;
+          text-align: center;
+        }
+
+        .page-title {
+          font-size: 2rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+          font-size: 1rem;
+          color: var(--color-text-secondary);
+        }
+
+        .filter-section {
+          padding: 1rem 0 2rem;
+        }
+
+        .filters {
+          display: flex;
+          justify-content: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .filter-btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.8125rem;
+          font-weight: 500;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-sm);
+          background: transparent;
+          color: var(--color-text-secondary);
+          transition: all var(--transition-fast);
+        }
+
+        .filter-btn:hover {
+          border-color: var(--color-text-muted);
+          color: var(--color-text-primary);
+        }
+
+        .filter-btn.active {
+          background-color: var(--color-accent);
+          border-color: var(--color-accent);
+          color: var(--color-bg);
+        }
+
+        .projects-grid-section {
+          padding-bottom: 3rem;
+        }
+
+        .projects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .project-card {
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          overflow: hidden;
+          background-color: var(--color-surface);
+          transition: border-color var(--transition-fast);
+        }
+
+        .project-card:hover {
+          border-color: var(--color-text-muted);
+        }
+
+        .project-preview {
+          height: 160px;
+          background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-border) 100%);
+          position: relative;
+        }
+
+        .featured-tag {
+          position: absolute;
+          top: 0.75rem;
+          right: 0.75rem;
+          font-size: 0.6875rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          padding: 0.25rem 0.5rem;
+          background-color: var(--color-accent);
+          color: var(--color-bg);
+          border-radius: var(--radius-sm);
+        }
+
+        .project-content {
+          padding: 1.25rem;
+        }
+
+        .project-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .project-desc {
+          font-size: 0.875rem;
+          color: var(--color-text-secondary);
+          line-height: 1.6;
+          margin-bottom: 0.75rem;
+        }
+
+        .tech-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.375rem;
+          margin-bottom: 1rem;
+        }
+
+        .tech-tag {
+          font-size: 0.6875rem;
+          padding: 0.2rem 0.5rem;
+          background-color: var(--color-bg);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-sm);
+          color: var(--color-text-secondary);
+        }
+
+        .project-links {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .project-links :global(.button) {
+          flex: 1;
+          padding: 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .empty-state {
+          text-align: center;
+          padding: 3rem;
+          color: var(--color-text-muted);
+        }
+
+        @media (max-width: 768px) {
+          .projects-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </main>
   )
 }
-

@@ -4,169 +4,142 @@ export default function AboutMe({ data }) {
     if (!data) return null;
 
     return (
-        <section className="container" style={{
-            padding: 'var(--spacing-xl) 0',
-            marginBottom: 'var(--spacing-xl)'
-        }}>
-            {/* Section Header */}
-            <div className="animate-fade-in-up" style={{
-                textAlign: 'center',
-                marginBottom: 'var(--spacing-xl)',
-                maxWidth: '600px',
-                margin: '0 auto var(--spacing-xl)'
-            }}>
-                <h2 style={{
-                    fontSize: 'clamp(2rem, 5vw, 2.5rem)',
-                    fontWeight: '800',
-                    marginBottom: 'var(--spacing-sm)',
-                    color: 'var(--color-text-primary)'
-                }}>
-                    About Me
-                </h2>
-                <p style={{
-                    fontSize: '1rem',
-                    color: 'var(--color-text-secondary)',
-                    lineHeight: '1.6'
-                }}>
-                    {data.tagline || 'The person behind the code'}
-                </p>
-            </div>
+        <section className="about">
+            <div className="container">
+                <div className="about-content">
+                    <div className="about-main">
+                        <h2 className="section-title">About</h2>
+                        <p className="story">
+                            {data.about?.story || 'Passionate about building things that matter.'}
+                        </p>
 
-            {/* Content Grid */}
-            <div className="grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: 'var(--spacing-lg)',
-                maxWidth: '1000px',
-                margin: '0 auto'
-            }}>
-                {/* Story Card */}
-                <div className="card hover-lift animate-fade-in-up" style={{
-                    padding: 'var(--spacing-lg)',
-                    animationDelay: '0.1s'
-                }}>
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '700',
-                        marginBottom: 'var(--spacing-md)',
-                        color: 'var(--color-text-primary)'
-                    }}>
-                        My Story
-                    </h3>
-                    <p style={{
-                        fontSize: '0.95rem',
-                        color: 'var(--color-text-secondary)',
-                        lineHeight: '1.7'
-                    }}>
-                        {data.about?.story || 'My story...'}
-                    </p>
-                </div>
-
-                {/* Quick Info Card */}
-                <div className="card hover-lift animate-fade-in-up" style={{
-                    padding: 'var(--spacing-lg)',
-                    animationDelay: '0.2s'
-                }}>
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '700',
-                        marginBottom: 'var(--spacing-md)',
-                        color: 'var(--color-text-primary)'
-                    }}>
-                        Quick Info
-                    </h3>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 'var(--spacing-sm)'
-                    }}>
-                        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.25rem' }}>📍</span>
-                            <span style={{ color: 'var(--color-text-secondary)' }}>{data.location || 'Location'}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.25rem' }}>💼</span>
-                            <span style={{ color: 'var(--color-text-secondary)' }}>{data.title || 'Developer'}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.25rem' }}>✉️</span>
-                            <span style={{ color: 'var(--color-text-secondary)' }}>{data.email || 'email@example.com'}</span>
+                        <div className="info-grid">
+                            <div className="info-item">
+                                <span className="info-label">Location</span>
+                                <span className="info-value">{data.location || 'Remote'}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="info-label">Role</span>
+                                <span className="info-value">{data.title || 'Developer'}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="info-label">Email</span>
+                                <span className="info-value">{data.email || 'hello@example.com'}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Interests Card */}
-                <div className="card hover-lift animate-fade-in-up" style={{
-                    padding: 'var(--spacing-lg)',
-                    animationDelay: '0.3s'
-                }}>
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '700',
-                        marginBottom: 'var(--spacing-md)',
-                        color: 'var(--color-text-primary)'
-                    }}>
-                        Interests
-                    </h3>
-                    <div style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 'var(--spacing-xs)'
-                    }}>
-                        {(data.about?.interests || []).map((interest, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    padding: '0.35rem 0.75rem',
-                                    fontSize: '0.8rem',
-                                    backgroundColor: 'var(--color-surface)',
-                                    color: 'var(--color-text-secondary)',
-                                    borderRadius: 'var(--radius-sm)',
-                                    border: '1px solid var(--color-border)'
-                                }}
-                            >
-                                {interest}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                    <div className="about-side">
+                        {data.about?.interests?.length > 0 && (
+                            <div className="tag-group">
+                                <h3 className="tag-title">Interests</h3>
+                                <div className="tags">
+                                    {data.about.interests.map((interest, i) => (
+                                        <span key={i} className="tag">{interest}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
-                {/* Values Card */}
-                <div className="card hover-lift animate-fade-in-up" style={{
-                    padding: 'var(--spacing-lg)',
-                    animationDelay: '0.4s'
-                }}>
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '700',
-                        marginBottom: 'var(--spacing-md)',
-                        color: 'var(--color-text-primary)'
-                    }}>
-                        Values
-                    </h3>
-                    <div style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 'var(--spacing-xs)'
-                    }}>
-                        {(data.about?.values || []).map((value, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    padding: '0.35rem 0.75rem',
-                                    fontSize: '0.8rem',
-                                    backgroundColor: 'var(--color-accent)',
-                                    color: 'var(--color-bg)',
-                                    borderRadius: 'var(--radius-sm)',
-                                    fontWeight: '500'
-                                }}
-                            >
-                                {value}
-                            </span>
-                        ))}
+                        {data.about?.values?.length > 0 && (
+                            <div className="tag-group">
+                                <h3 className="tag-title">Values</h3>
+                                <div className="tags">
+                                    {data.about.values.map((value, i) => (
+                                        <span key={i} className="tag tag-accent">{value}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+
+            <style jsx>{`
+                .about {
+                    padding: 4rem 0;
+                }
+
+                .about-content {
+                    display: grid;
+                    grid-template-columns: 1.5fr 1fr;
+                    gap: 3rem;
+                }
+
+                .section-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                }
+
+                .story {
+                    font-size: 1rem;
+                    color: var(--color-text-secondary);
+                    line-height: 1.7;
+                    margin-bottom: 1.5rem;
+                }
+
+                .info-grid {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .info-item {
+                    display: flex;
+                    gap: 1rem;
+                }
+
+                .info-label {
+                    font-size: 0.8125rem;
+                    color: var(--color-text-muted);
+                    min-width: 70px;
+                }
+
+                .info-value {
+                    font-size: 0.875rem;
+                    color: var(--color-text-primary);
+                }
+
+                .tag-group {
+                    margin-bottom: 1.5rem;
+                }
+
+                .tag-title {
+                    font-size: 0.8125rem;
+                    font-weight: 500;
+                    color: var(--color-text-muted);
+                    margin-bottom: 0.75rem;
+                }
+
+                .tags {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                }
+
+                .tag {
+                    padding: 0.375rem 0.75rem;
+                    font-size: 0.8125rem;
+                    background-color: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-sm);
+                    color: var(--color-text-secondary);
+                }
+
+                .tag-accent {
+                    background-color: var(--color-accent);
+                    border-color: var(--color-accent);
+                    color: var(--color-bg);
+                }
+
+                @media (max-width: 768px) {
+                    .about-content {
+                        grid-template-columns: 1fr;
+                        gap: 2rem;
+                    }
+                }
+            `}</style>
         </section>
     )
 }
