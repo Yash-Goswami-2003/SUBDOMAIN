@@ -7,7 +7,13 @@ import BlogDetailView from './BlogDetailView';
 export default function BlogContainer({ initialBlogs, initialBlogId }) {
     const [blogs, setBlogs] = useState(initialBlogs || []);
     const [selectedBlogId, setSelectedBlogId] = useState(initialBlogId || null);
-    const [selectedBlog, setSelectedBlog] = useState(null);
+    // Initialize selectedBlog immediately to prevent flicker
+    const [selectedBlog, setSelectedBlog] = useState(() => {
+        if (initialBlogId && initialBlogs) {
+            return initialBlogs.find(b => b.id === initialBlogId) || null;
+        }
+        return null;
+    });
 
     useEffect(() => {
         if (selectedBlogId) {

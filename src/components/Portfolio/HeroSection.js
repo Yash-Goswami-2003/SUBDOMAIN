@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import VSCodeWindow from './VSCodeWindow'
 
 export default function HeroSection({ data }) {
   if (!data) return null;
@@ -8,24 +9,30 @@ export default function HeroSection({ data }) {
   return (
     <section className="hero">
       <div className="container">
-        <div className="hero-content">
-          <span className="status">Available for work</span>
+        <div className="hero-grid">
+          <div className="hero-content">
+            <span className="status">Currently under development.</span>
 
-          <h1 className="title">
-            {data.name || 'Your Name'}
-          </h1>
+            <h1 className="title">
+              {data.name || 'Your Name'}
+            </h1>
 
-          <p className="bio">
-            {data.bio || 'Software engineer crafting clean, functional digital experiences.'}
-          </p>
+            <p className="bio">
+              {data.bio || 'Software engineer crafting clean, functional digital experiences.'}
+            </p>
 
-          <div className="actions">
-            <Link href="/projects" className="button">
-              View Work
-            </Link>
-            <Link href="/contact" className="button button-outline">
-              Contact
-            </Link>
+            <div className="actions">
+              <Link href="/projects" className="button">
+                View Work
+              </Link>
+              <Link href="/contact" className="button button-outline">
+                Contact
+              </Link>
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <VSCodeWindow data={data} />
           </div>
         </div>
       </div>
@@ -39,15 +46,24 @@ export default function HeroSection({ data }) {
 
         .container {
           width: 100%;
-          display: flex;
-          justify-content: flex-start;
+        }
+
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4rem;
+          align-items: center;
         }
 
         .hero-content {
           max-width: 600px;
           text-align: left;
-          margin-left: 0;
-          margin-right: auto;
+        }
+
+        .hero-visual {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
         }
 
         .status {
@@ -79,13 +95,26 @@ export default function HeroSection({ data }) {
           justify-content: flex-start;
         }
 
-        @media (max-width: 768px) {
-          .hero {
-            min-height: 70vh;
+        @media (max-width: 1024px) {
+          .hero-grid {
+            grid-template-columns: 1fr;
+            gap: 3rem;
           }
 
-          .container {
+          .hero-content {
+            order: 1;
+          }
+
+          .hero-visual {
+            order: 2;
             justify-content: center;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .hero {
+            min-height: auto;
+            padding: 4rem 0;
           }
 
           .hero-content {
