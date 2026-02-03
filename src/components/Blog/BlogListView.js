@@ -1,4 +1,6 @@
-'use client';
+'use client'
+
+import { format } from 'date-fns'
 
 export default function BlogListView({ blogs, onSelectBlog }) {
     // Featured post is the first one, rest are regular
@@ -26,7 +28,17 @@ export default function BlogListView({ blogs, onSelectBlog }) {
                         <div className="featured-meta">
                             <span className="post-category">{featuredPost.category || 'Development'}</span>
                             <span className="meta-dot">•</span>
-                            <span className="post-date">{featuredPost.date}</span>
+                            <span className="post-date">
+                                {featuredPost.date || (featuredPost.createdAt ? format(new Date(featuredPost.createdAt), 'MMM dd, yyyy') : 'No date')}
+                            </span>
+                            {featuredPost.status && (
+                                <>
+                                    <span className="meta-dot">•</span>
+                                    <span className={`status-badge ${featuredPost.status}`}>
+                                        {featuredPost.status}
+                                    </span>
+                                </>
+                            )}
                         </div>
                         <h2 className="featured-title">{featuredPost.title}</h2>
                         <p className="featured-excerpt">{featuredPost.excerpt}</p>
@@ -51,7 +63,14 @@ export default function BlogListView({ blogs, onSelectBlog }) {
                             >
                                 <div className="post-meta">
                                     <span className="post-category-small">{blog.category || 'Dev'}</span>
-                                    <span className="post-date-small">{blog.date}</span>
+                                    <span className="post-date-small">
+                                        {blog.date || (blog.createdAt ? format(new Date(blog.createdAt), 'MMM dd, yyyy') : 'No date')}
+                                    </span>
+                                    {blog.status && (
+                                        <span className={`status-badge-small ${blog.status}`}>
+                                            {blog.status}
+                                        </span>
+                                    )}
                                 </div>
                                 <h3 className="post-title">{blog.title}</h3>
                                 <p className="post-excerpt">{blog.excerpt}</p>
@@ -266,6 +285,42 @@ export default function BlogListView({ blogs, onSelectBlog }) {
                 .post-read-time {
                     font-size: 0.6875rem;
                     color: var(--color-text-muted);
+                }
+
+                .status-badge {
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+
+                .status-badge.published {
+                    background-color: #d1fae5;
+                    color: #065f46;
+                }
+
+                .status-badge.draft {
+                    background-color: #fed7aa;
+                    color: #92400e;
+                }
+
+                .status-badge-small {
+                    padding: 1px 6px;
+                    border-radius: 8px;
+                    font-size: 0.625rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+
+                .status-badge-small.published {
+                    background-color: #d1fae5;
+                    color: #065f46;
+                }
+
+                .status-badge-small.draft {
+                    background-color: #fed7aa;
+                    color: #92400e;
                 }
 
                 @media (max-width: 768px) {

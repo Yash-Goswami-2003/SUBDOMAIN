@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
 
 export default function LatestInsights({ blogs = [] }) {
     const latestBlogs = blogs.slice(0, 3)
@@ -44,10 +45,7 @@ export default function LatestInsights({ blogs = [] }) {
                             className="blog-card"
                         >
                             <span className="blog-date">
-                                {new Date(blog.date).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                })}
+                                {blog.date ? format(new Date(blog.date), 'MMM dd') : 'No date'}
                             </span>
                             <h3 className="blog-title">{blog.title}</h3>
                             <p className="blog-excerpt">{blog.excerpt || blog.description}</p>

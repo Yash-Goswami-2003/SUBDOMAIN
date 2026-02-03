@@ -1,3 +1,8 @@
+## Feature
+- Implemented a Blogs Reader and Writer.
+- Now we can read and write blogs in a Markdown format. 
+- Implemented a TipTap editor for blogs.
+
 ## Fix
 - Re-implemented the UI and UX of the website.
 - Implemented clean and minimalistic design for the website. 
