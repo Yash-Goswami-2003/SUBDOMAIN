@@ -42,8 +42,8 @@ export default function ProjectsPageClient({ data }) {
       <section className="projects-grid-section">
         <div className="container">
           <div className="projects-grid">
-            {filteredProjects.map((project) => (
-              <article key={project.id} className="project-card">
+            {filteredProjects.map((project, idx) => (
+              <article key={`${project.id ?? 'project'}-${idx}`} className="project-card">
                 <div className="project-preview">
                   {project.featured && <span className="featured-tag">Featured</span>}
                 </div>

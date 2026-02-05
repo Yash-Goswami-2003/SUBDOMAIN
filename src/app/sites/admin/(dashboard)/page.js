@@ -52,6 +52,7 @@ export default function AdminDashboard() {
     const [projectsStatus, setProjectsStatus] = useState({ message: '', type: '' });
     const [isNewProject, setIsNewProject] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const normalizeProject = (project, fallbackId) => ({
         documentType: 'project',
@@ -95,48 +96,35 @@ export default function AdminDashboard() {
         githubUrl: ''
     });
 
-    const fetchProjects = async () => {
+    const fetchProjects = async (options = {}) => {
         setProjectsLoading(true);
         setProjectsStatus({ message: '', type: '' });
         try {
-            const res = await fetch(`/api/admin/documents?filter=${encodeURIComponent(JSON.stringify({ documentType: 'project' }))}`);
+            const res = await fetch('/api/admin/projects');
             if (!res.ok) throw new Error('Failed to fetch projects');
             const data = await res.json();
-            const normalized = (Array.isArray(data) ? data : []).map((project, index) => normalizeProject(project, index + 1));
+            const list = Array.isArray(data?.projects) ? data.projects : Array.isArray(data) ? data : [];
+            const normalized = list.map((project, index) => normalizeProject(project, index + 1));
             setProjects(normalized);
-            if (normalized.length > 0) {
-                setSelectedProjectId(normalized[0].id);
-                setProjectForm(toFormState(normalized[0]));
+
+            const preferredId = Number.isFinite(Number(options.selectId))
+                ? Number(options.selectId)
+                : Number.isFinite(Number(selectedProjectId)) ? Number(selectedProjectId) : null;
+            const selected = preferredId ? normalized.find((project) => Number(project.id) === preferredId) : null;
+
+            if (selected) {
+                setSelectedProjectId(selected.id);
+                setProjectForm(toFormState(selected));
                 setIsNewProject(false);
             } else {
-                const fresh = createProjectTemplate(1);
-                setSelectedProjectId(fresh.id);
-                setProjectForm(toFormState(fresh));
-                setIsNewProject(true);
+                setSelectedProjectId(null);
+                setProjectForm(null);
+                setIsNewProject(false);
             }
         } catch (error) {
             setProjectsStatus({ message: error.message, type: 'error' });
         } finally {
             setProjectsLoading(false);
-        }
-    };
-
-    const persistProjects = async (nextProjects, successMessage) => {
-        setProjectsSaving(true);
-        setProjectsStatus({ message: 'Saving...', type: 'info' });
-        try {
-            const res = await fetch('/api/admin/documents', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ documents: nextProjects, filter: { documentType: 'project' } })
-            });
-            if (!res.ok) throw new Error('Failed to save projects');
-            const result = await res.json();
-            setProjectsStatus({ message: successMessage || result.message, type: 'success' });
-        } catch (error) {
-            setProjectsStatus({ message: error.message, type: 'error' });
-        } finally {
-            setProjectsSaving(false);
         }
     };
 
@@ -149,7 +137,7 @@ export default function AdminDashboard() {
     const handleProjectNew = () => {
         const nextId = getNextProjectId(projects);
         const fresh = createProjectTemplate(nextId);
-        setSelectedProjectId(fresh.id);
+        setSelectedProjectId(null);
         setProjectForm(toFormState(fresh));
         setIsNewProject(true);
     };
@@ -184,44 +172,50 @@ export default function AdminDashboard() {
             return;
         }
         const payload = buildProjectPayload(projectForm);
-
-        let nextProjects = isNewProject
-            ? [...projects, payload]
-            : projects.map((project) => (project.id === selectedProjectId ? payload : project));
-
-        if (payload.featured) {
-            nextProjects = nextProjects.map((project) => ({
-                ...project,
-                featured: project.id === payload.id
-            }));
+        setProjectsSaving(true);
+        setProjectsStatus({ message: isNewProject ? 'Creating project...' : 'Saving changes...', type: 'info' });
+        try {
+            const res = await fetch('/api/admin/projects', {
+                method: isNewProject ? 'POST' : 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ project: payload })
+            });
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.error || 'Failed to save project');
+            const savedProject = normalizeProject(result.project || payload, payload.id);
+            await fetchProjects({ selectId: savedProject.id });
+            setProjectsStatus({ message: isNewProject ? 'Project created' : 'Project updated', type: 'success' });
+            setIsNewProject(false);
+        } catch (error) {
+            setProjectsStatus({ message: error.message, type: 'error' });
+        } finally {
+            setProjectsSaving(false);
         }
-
-        setProjects(nextProjects);
-        setIsNewProject(false);
-        setSelectedProjectId(payload.id);
-        setProjectForm(toFormState(payload));
-        await persistProjects(nextProjects, isNewProject ? 'Project created' : 'Project updated');
     };
 
     const handleProjectDelete = async () => {
         if (!selectedProjectId) return;
-        const current = projects.find((project) => project.id === selectedProjectId);
-        if (!current) return;
-        const shouldDelete = window.confirm(`Delete "${current.title || 'Untitled project'}"? This cannot be undone.`);
-        if (!shouldDelete) return;
-        const nextProjects = projects.filter((project) => project.id !== selectedProjectId);
-        setProjects(nextProjects);
-        if (nextProjects.length > 0) {
-            setSelectedProjectId(nextProjects[0].id);
-            setProjectForm(toFormState(nextProjects[0]));
-            setIsNewProject(false);
-        } else {
-            const fresh = createProjectTemplate(1);
-            setSelectedProjectId(fresh.id);
-            setProjectForm(toFormState(fresh));
-            setIsNewProject(true);
+        setProjectsSaving(true);
+        setProjectsStatus({ message: 'Deleting project...', type: 'info' });
+        try {
+            const res = await fetch(`/api/admin/projects?id=${selectedProjectId}`, { method: 'DELETE' });
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.error || 'Failed to delete project');
+            await fetchProjects();
+            setProjectsStatus({ message: 'Project deleted', type: 'success' });
+        } catch (error) {
+            setProjectsStatus({ message: error.message, type: 'error' });
+        } finally {
+            setProjectsSaving(false);
         }
-        await persistProjects(nextProjects, 'Project deleted');
+    };
+
+    const openDeleteModal = () => {
+        if (!selectedProjectId || isNewProject) {
+            setProjectsStatus({ message: 'Select a saved project to delete.', type: 'info' });
+            return;
+        }
+        setDeleteModalOpen(true);
     };
 
     const handleProjectUpload = async (file) => {
@@ -339,6 +333,7 @@ export default function AdminDashboard() {
         info: 'border-blue-200 bg-blue-50 text-blue-600'
     };
     const getStatusClass = (tone) => statusToneClasses[tone] || 'border-transparent text-[var(--color-text-secondary)]';
+    const currentProjectLabel = projectForm?.title?.trim() || 'Untitled project';
 
     return (
         <div className="flex min-h-screen bg-[var(--color-bg)] text-[var(--color-text-primary)]">
@@ -354,6 +349,26 @@ export default function AdminDashboard() {
                             <button onClick={() => setShowModal(null)} className={ghostButtonClass}>Cancel</button>
                             <button onClick={() => { showModal === 'restore' ? handleRestore() : handleSubmit(); setShowModal(null); }} className={primaryButtonClass}>
                                 Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {deleteModalOpen && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50" onClick={() => setDeleteModalOpen(false)}>
+                    <div className="w-[90%] max-w-[380px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-base font-semibold">Delete project?</h3>
+                        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                            Do you really want to delete "{currentProjectLabel}"? This action cannot be undone.
+                        </p>
+                        <div className="mt-5 flex justify-end gap-3">
+                            <button onClick={() => setDeleteModalOpen(false)} className={ghostButtonClass}>Cancel</button>
+                            <button
+                                onClick={() => { setDeleteModalOpen(false); handleProjectDelete(); }}
+                                className={dangerButtonClass}
+                            >
+                                Delete
                             </button>
                         </div>
                     </div>
@@ -477,6 +492,9 @@ export default function AdminDashboard() {
                                         <button onClick={handleProjectNew} className={ghostButtonClass}>
                                             New Project
                                         </button>
+                                        <button onClick={openDeleteModal} className={dangerButtonClass} disabled={!selectedProjectId || isNewProject}>
+                                            Delete
+                                        </button>
                                         <button onClick={handleProjectSave} className={primaryButtonClass} disabled={projectsSaving || !projectForm}>
                                             {projectsSaving ? 'Saving...' : isNewProject ? 'Create Project' : 'Save Changes'}
                                         </button>
@@ -500,9 +518,9 @@ export default function AdminDashboard() {
                                             {!projectsLoading && projects.length === 0 && (
                                                 <div className="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">No projects yet. Create your first one.</div>
                                             )}
-                                            {!projectsLoading && projects.map((project) => (
+                                            {!projectsLoading && projects.map((project, index) => (
                                                 <button
-                                                    key={project.id}
+                                                    key={`${project.id ?? 'project'}-${index}`}
                                                     className={`flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-3 text-left transition-colors last:border-b-0 ${selectedProjectId === project.id ? 'bg-[var(--color-bg)] text-[var(--color-text-primary)]' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-text-primary)]'}`}
                                                     onClick={() => handleProjectSelect(project)}
                                                 >
@@ -655,14 +673,23 @@ export default function AdminDashboard() {
                                                     </label>
                                                     <div className="flex items-center gap-3">
                                                         <span className="text-xs text-[var(--color-text-muted)]">Project ID: {projectForm.id}</span>
-                                                        <button type="button" onClick={handleProjectDelete} className={dangerButtonClass}>
-                                                            Delete
-                                                        </button>
+                                                        {isNewProject && (
+                                                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-0.5 text-[0.625rem] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                                                                Unsaved
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">Select a project to edit.</div>
+                                            <div className="flex flex-col items-center justify-center gap-3 px-4 py-12 text-center">
+                                                <p className="text-sm text-[var(--color-text-muted)]">
+                                                    Select a project from the list or start a new one.
+                                                </p>
+                                                <button onClick={handleProjectNew} className={primaryButtonClass}>
+                                                    Create New Project
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 </div>

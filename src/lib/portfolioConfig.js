@@ -53,6 +53,22 @@ function transformDocumentsToConfig(documents) {
   const projects = documents.filter(d => d.documentType === 'project');
   const experienceDetails = documents.filter(d => d.documentType === 'experience');
 
+  // Ensure project ids are unique and numeric for stable rendering
+  const usedProjectIds = new Set();
+  let nextProjectId = 1;
+  const normalizeProjectId = (value) => {
+    const numericId = Number(value);
+    if (Number.isFinite(numericId) && !usedProjectIds.has(numericId)) {
+      usedProjectIds.add(numericId);
+      if (numericId >= nextProjectId) nextProjectId = numericId + 1;
+      return numericId;
+    }
+    const assignedId = nextProjectId;
+    nextProjectId += 1;
+    usedProjectIds.add(assignedId);
+    return assignedId;
+  };
+
   return {
     // Simple data fields
     name: getData('name', 'Your Name'),
@@ -90,8 +106,8 @@ function transformDocumentsToConfig(documents) {
     })),
 
     // Projects array
-    projects: projects.map((proj, index) => ({
-      id: proj.id || index + 1,
+    projects: projects.map((proj) => ({
+      id: normalizeProjectId(proj.id),
       title: proj.title || '',
       description: proj.description || '',
       longDescription: proj.longDescription || proj.description || '',
