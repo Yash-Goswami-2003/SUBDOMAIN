@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -80,45 +79,49 @@ export default function BlogDetailView({ blog, onBack }) {
     // Apply smart formatting only if it's Markdown (not TipTap HTML)
     const renderedContent = isHTML ? blog.content : smartFormatContent(blog.content);
 
+    const containerClass = 'mx-auto w-full max-w-[760px] px-6';
+    const readerFontClass = "font-['Source_Sans_3','Inter','Helvetica_Neue',Arial,sans-serif]";
+    const proseClass = 'text-[1.05rem] leading-7 text-[#2f2f2f] [&_p]:mb-4 [&_p]:text-[#3f3f3f] [&_strong]:text-[#1f1f1f] [&_a]:text-[var(--color-accent)] [&_a]:underline-offset-4 [&_a]:decoration-[var(--color-border)] [&_a:hover]:decoration-[#1f1f1f] [&_h1]:mt-10 [&_h1]:text-[2.1rem] [&_h1]:font-semibold [&_h1]:tracking-[-0.03em] [&_h1]:text-[#1a1a1a] [&_h2]:mt-10 [&_h2]:text-[1.75rem] [&_h2]:font-semibold [&_h2]:tracking-[-0.02em] [&_h2]:text-[#1a1a1a] [&_h3]:mt-8 [&_h3]:text-[1.4rem] [&_h3]:font-semibold [&_h3]:text-[#1a1a1a] [&_h4]:mt-6 [&_h4]:text-[1.1rem] [&_h4]:font-semibold [&_h4]:text-[#1a1a1a] [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_li]:marker:text-[#8a8a8a] [&_blockquote]:my-8 [&_blockquote]:border-l-2 [&_blockquote]:border-[#1f1f1f] [&_blockquote]:bg-[var(--color-surface)] [&_blockquote]:px-6 [&_blockquote]:py-5 [&_blockquote]:italic [&_blockquote]:text-[1.1rem] [&_blockquote]:text-[#444444] [&_pre]:my-8 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-neutral-800 [&_pre]:bg-neutral-950 [&_pre]:p-6 [&_pre]:text-sm [&_pre]:leading-6 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.9em] [&_code]:text-[#b42318] [&_hr]:my-12 [&_hr]:border-0 [&_hr]:h-px [&_hr]:bg-[var(--color-border)]';
+
     return (
-        <div className="modern-blog-layout">
-            {/* Minimalist Header Nav */}
-            <div className="top-nav">
-                <button onClick={onBack} className="back-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text-primary)]">
+            <div className={`${containerClass} pt-8 font-sans`}>
+                <button onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                     <span>Back to all stories</span>
                 </button>
             </div>
 
-            <article className="main-story">
-                <header className="story-header">
-                    <div className="story-meta">
-                        <span className="meta-category">{blog.tags?.[0] || 'Insight'}</span>
-                        <span className="meta-dot"></span>
-                        <time>{blog.date || (blog.createdAt ? format(new Date(blog.createdAt), 'MMM dd, yyyy') : 'Recently Published')}</time>
+            <article className={`${containerClass} pb-24 pt-6 ${readerFontClass}`}>
+                <header className="mb-12">
+                    <div className="flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)] font-sans">
+                        <span className="text-[var(--color-accent)]">{blog.tags?.[0] || 'Insight'}</span>
+                        <span className="h-[3px] w-[3px] rounded-full bg-[var(--color-border)]"></span>
+                        <time className="text-[var(--color-text-secondary)]">{blog.date || (blog.createdAt ? format(new Date(blog.createdAt), 'MMM dd, yyyy') : 'Recently Published')}</time>
                     </div>
 
-                    <h1 className="story-title">{blog.title}</h1>
+                    <h1 className="mt-5 text-[clamp(2.25rem,5vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
+                        {blog.title}
+                    </h1>
 
-                    <div className="author-card">
-                        <div className="author-avatar">{blog.author?.charAt(0) || 'Y'}</div>
-                        <div className="author-details">
-                            <span className="author-name">{blog.author || 'Yash Goswami'}</span>
-                            <span className="author-role">{blog.readTime || '5 min'} read</span>
+                    <div className="mt-6 flex items-center gap-3 font-sans">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-text-primary)] text-sm font-semibold text-[var(--color-bg)]">
+                            {blog.author?.charAt(0) || 'Y'}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-semibold">{blog.author || 'Yash Goswami'}</span>
+                            <span className="text-xs text-[var(--color-text-muted)]">{blog.readTime || '5 min'} read</span>
                         </div>
                     </div>
                 </header>
 
-                <div className="story-content">
+                <div>
                     {isHTML ? (
-                        <div
-                            className="prose-container"
-                            dangerouslySetInnerHTML={{ __html: renderedContent }}
-                        />
+                        <div className={proseClass} dangerouslySetInnerHTML={{ __html: renderedContent }} />
                     ) : (
-                        <div className="prose-container">
+                        <div className={proseClass}>
                             <ReactMarkdown
                                 remarkPlugins={[remarkGfm]}
                                 rehypePlugins={[rehypeHighlight]}
@@ -129,230 +132,21 @@ export default function BlogDetailView({ blog, onBack }) {
                     )}
                 </div>
 
-                <footer className="story-footer">
-                    <div className="footer-cta">
-                        <h2>Enjoyed this article?</h2>
-                        <p>I write about development, design, and product thinking every week. Join 5,000+ others.</p>
-                        <div className="subscribe-form">
-                            <input type="email" placeholder="Enter your email" />
-                            <button>Subscribe</button>
-                        </div>
+                <footer className="mt-16 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center font-sans">
+                    <div className="mx-auto flex max-w-[520px] flex-col items-center">
+                        <h2 className="text-2xl font-semibold tracking-[-0.02em]">Did you like this blog?</h2>
+                        <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+                            Want to explore more posts like this? Head back to all stories.
+                        </p>
+                        <button
+                            onClick={onBack}
+                            className="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-6 py-3 text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-text-primary)]"
+                        >
+                            Read More Blogs
+                        </button>
                     </div>
                 </footer>
             </article>
-
-            <style jsx global>{`
-                @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-
-                :root {
-                    --accent-primary: #000000;
-                    --text-main: #1a1a1a;
-                    --text-secondary: #555555;
-                    --bg-main: #ffffff;
-                    --border-soft: #f0f0f0;
-                    --notion-red: #eb5757;
-                }
-
-                .modern-blog-layout {
-                    background: var(--bg-main);
-                    color: var(--text-main);
-                    min-height: 100vh;
-                    font-family: 'Inter', -apple-system, sans-serif;
-                }
-
-                .prose-container {
-                    font-size: 1.125rem;
-                    line-height: 1.7;
-                    color: var(--text-main);
-                }
-
-                .prose-container h2, .prose-container h3 {
-                    font-family: 'Outfit', sans-serif;
-                    color: #000;
-                    margin-top: 2.5rem;
-                    margin-bottom: 1rem;
-                    letter-spacing: -0.02em;
-                }
-
-                .prose-container h2 { font-size: 1.875rem; font-weight: 700; }
-                .prose-container h3 { font-size: 1.5rem; font-weight: 600; }
-
-                .prose-container p { margin-bottom: 0.5rem; }
-
-                /* Better Code Block Styling */
-                .prose-container pre {
-                    background: #0d0d0d;
-                    color: #fff;
-                    padding: 1.5rem;
-                    border-radius: 12px;
-                    margin: 2rem 0;
-                    overflow-x: auto;
-                    font-size: 0.9rem;
-                    line-height: 1.5;
-                    border: 1px solid #222;
-                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                    position: relative;
-                }
-
-                .prose-container code {
-                    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-                    background: rgba(0,0,0,0.05);
-                    padding: 0.2rem 0.4rem;
-                    border-radius: 4px;
-                    font-size: 0.85em;
-                    color: var(--notion-red);
-                }
-
-                .prose-container pre code { 
-                    background: transparent; 
-                    color: inherit; 
-                    padding: 0;
-                    font-family: inherit;
-                }
-
-                .prose-container blockquote {
-                    border-left: 4px solid #000;
-                    padding-left: 1.5rem;
-                    margin: 2rem 0;
-                    font-style: italic;
-                    font-size: 1.25rem;
-                    color: var(--text-secondary);
-                    background: #f9f9f9;
-                    padding: 1.5rem;
-                    border-radius: 0 12px 12px 0;
-                }
-
-                .prose-container ul, .prose-container ol {
-                    margin-bottom: 1.5rem;
-                    padding-left: 1.5rem;
-                }
-
-                .prose-container li { margin-bottom: 0.5rem; }
-
-                .prose-container hr {
-                    border: none;
-                    height: 1px;
-                    background: #eee;
-                    margin: 4rem 0;
-                }
-            `}</style>
-
-            <style jsx>{`
-                .top-nav {
-                    max-width: 900px;
-                    margin: 0 auto;
-                    padding: 32px 0;
-                }
-
-                .back-link {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                    transition: all 0.2s;
-                    padding: 0 24px;
-                }
-
-                .back-link:hover { color: #000; transform: translateX(-4px); }
-
-                .main-story {
-                    max-width: 720px;
-                    margin: 0 auto;
-                    padding: 0 24px 100px;
-                }
-
-                .story-header { margin-bottom: 4rem; }
-
-                .story-meta {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    margin-bottom: 1.5rem;
-                }
-
-                .meta-category { color: var(--notion-red); }
-                .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: #ccc; }
-
-                .story-title {
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 3.5rem;
-                    font-weight: 800;
-                    line-height: 1.1;
-                    letter-spacing: -0.04em;
-                    margin-bottom: 2.5rem;
-                }
-
-                .author-card {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-
-                .author-avatar {
-                    width: 44px;
-                    height: 44px;
-                    background: #000;
-                    color: #fff;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-weight: 700;
-                }
-
-                .author-details { display: flex; flex-direction: column; }
-                .author-name { font-weight: 700; font-size: 15px; }
-                .author-role { font-size: 13px; color: #888; }
-
-                .story-footer {
-                    margin-top: 6rem;
-                    padding: 4rem;
-                    background: #000;
-                    color: #fff;
-                    border-radius: 32px;
-                    text-align: center;
-                }
-
-                .footer-cta h2 { font-family: 'Outfit', sans-serif; font-size: 2.25rem; margin-bottom: 1rem; }
-                .footer-cta p { color: #aaa; margin-bottom: 2.5rem; max-width: 450px; margin-left: auto; margin-right: auto; }
-
-                .subscribe-form {
-                    display: flex;
-                    gap: 12px;
-                    max-width: 500px;
-                    margin: 0 auto;
-                }
-
-                .subscribe-form input {
-                    flex: 1;
-                    padding: 16px 24px;
-                    border-radius: 12px;
-                    border: none;
-                    background: #1a1a1a;
-                    color: #fff;
-                    outline: none;
-                }
-
-                .subscribe-form button {
-                    padding: 16px 32px;
-                    background: #fff;
-                    color: #000;
-                    font-weight: 700;
-                    border-radius: 12px;
-                }
-
-                @media (max-width: 768px) {
-                    .top-nav { padding: 24px 0; }
-                    .main-story { padding: 0 24px 60px; }
-                    .story-title { font-size: 2.25rem; }
-                    .story-footer { padding: 3rem 2rem; }
-                    .subscribe-form { flex-direction: column; }
-                }
-            `}</style>
         </div>
     );
 }
