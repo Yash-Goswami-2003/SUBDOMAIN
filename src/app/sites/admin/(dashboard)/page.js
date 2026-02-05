@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Editor from '@monaco-editor/react';
 import TipTapEditorWrapper from '@/components/Admin/TipTapEditorWrapper';
@@ -12,6 +12,9 @@ const Icons = {
     ),
     Blogs: () => (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+    ),
+    Projects: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"></rect><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path></svg>
     ),
     Database: () => (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
@@ -41,6 +44,213 @@ export default function AdminDashboard() {
     const [showModal, setShowModal] = useState(null);
     const [currentBlog, setCurrentBlog] = useState(null);
     const [view, setView] = useState('list'); // 'list' or 'editor'
+    const [projects, setProjects] = useState([]);
+    const [projectForm, setProjectForm] = useState(null);
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [projectsLoading, setProjectsLoading] = useState(false);
+    const [projectsSaving, setProjectsSaving] = useState(false);
+    const [projectsStatus, setProjectsStatus] = useState({ message: '', type: '' });
+    const [isNewProject, setIsNewProject] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const normalizeProject = (project, fallbackId) => ({
+        documentType: 'project',
+        id: Number.isFinite(Number(project?.id)) ? Number(project.id) : fallbackId,
+        title: project?.title || '',
+        description: project?.description || '',
+        longDescription: project?.longDescription || '',
+        image: project?.image || '',
+        technologies: Array.isArray(project?.technologies) ? project.technologies : [],
+        category: project?.category || '',
+        featured: Boolean(project?.featured),
+        liveUrl: project?.liveUrl || '',
+        githubUrl: project?.githubUrl || ''
+    });
+
+    const toFormState = (project) => ({
+        ...project,
+        technologiesInput: (project.technologies || []).join(', ')
+    });
+
+    const getNextProjectId = (list) => {
+        if (!list || list.length === 0) return 1;
+        const maxId = list.reduce((max, item) => {
+            const value = Number(item.id);
+            return Number.isFinite(value) && value > max ? value : max;
+        }, 0);
+        return maxId + 1;
+    };
+
+    const createProjectTemplate = (nextId) => ({
+        documentType: 'project',
+        id: nextId,
+        title: '',
+        description: '',
+        longDescription: '',
+        image: '',
+        technologies: [],
+        category: '',
+        featured: false,
+        liveUrl: '',
+        githubUrl: ''
+    });
+
+    const fetchProjects = async () => {
+        setProjectsLoading(true);
+        setProjectsStatus({ message: '', type: '' });
+        try {
+            const res = await fetch(`/api/admin/documents?filter=${encodeURIComponent(JSON.stringify({ documentType: 'project' }))}`);
+            if (!res.ok) throw new Error('Failed to fetch projects');
+            const data = await res.json();
+            const normalized = (Array.isArray(data) ? data : []).map((project, index) => normalizeProject(project, index + 1));
+            setProjects(normalized);
+            if (normalized.length > 0) {
+                setSelectedProjectId(normalized[0].id);
+                setProjectForm(toFormState(normalized[0]));
+                setIsNewProject(false);
+            } else {
+                const fresh = createProjectTemplate(1);
+                setSelectedProjectId(fresh.id);
+                setProjectForm(toFormState(fresh));
+                setIsNewProject(true);
+            }
+        } catch (error) {
+            setProjectsStatus({ message: error.message, type: 'error' });
+        } finally {
+            setProjectsLoading(false);
+        }
+    };
+
+    const persistProjects = async (nextProjects, successMessage) => {
+        setProjectsSaving(true);
+        setProjectsStatus({ message: 'Saving...', type: 'info' });
+        try {
+            const res = await fetch('/api/admin/documents', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ documents: nextProjects, filter: { documentType: 'project' } })
+            });
+            if (!res.ok) throw new Error('Failed to save projects');
+            const result = await res.json();
+            setProjectsStatus({ message: successMessage || result.message, type: 'success' });
+        } catch (error) {
+            setProjectsStatus({ message: error.message, type: 'error' });
+        } finally {
+            setProjectsSaving(false);
+        }
+    };
+
+    const handleProjectSelect = (project) => {
+        setSelectedProjectId(project.id);
+        setProjectForm(toFormState(project));
+        setIsNewProject(false);
+    };
+
+    const handleProjectNew = () => {
+        const nextId = getNextProjectId(projects);
+        const fresh = createProjectTemplate(nextId);
+        setSelectedProjectId(fresh.id);
+        setProjectForm(toFormState(fresh));
+        setIsNewProject(true);
+    };
+
+    const handleProjectChange = (field, value) => {
+        setProjectForm((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const buildProjectPayload = (form) => {
+        const technologies = form.technologiesInput
+            ? form.technologiesInput.split(',').map((tech) => tech.trim()).filter(Boolean)
+            : [];
+        return {
+            documentType: 'project',
+            id: Number(form.id),
+            title: form.title.trim(),
+            description: form.description.trim(),
+            longDescription: form.longDescription.trim(),
+            image: form.image.trim(),
+            technologies,
+            category: form.category.trim(),
+            featured: Boolean(form.featured),
+            liveUrl: form.liveUrl.trim(),
+            githubUrl: form.githubUrl.trim()
+        };
+    };
+
+    const handleProjectSave = async () => {
+        if (!projectForm) return;
+        if (!projectForm.title.trim() || !projectForm.description.trim()) {
+            setProjectsStatus({ message: 'Title and description are required', type: 'error' });
+            return;
+        }
+        const payload = buildProjectPayload(projectForm);
+
+        let nextProjects = isNewProject
+            ? [...projects, payload]
+            : projects.map((project) => (project.id === selectedProjectId ? payload : project));
+
+        if (payload.featured) {
+            nextProjects = nextProjects.map((project) => ({
+                ...project,
+                featured: project.id === payload.id
+            }));
+        }
+
+        setProjects(nextProjects);
+        setIsNewProject(false);
+        setSelectedProjectId(payload.id);
+        setProjectForm(toFormState(payload));
+        await persistProjects(nextProjects, isNewProject ? 'Project created' : 'Project updated');
+    };
+
+    const handleProjectDelete = async () => {
+        if (!selectedProjectId) return;
+        const current = projects.find((project) => project.id === selectedProjectId);
+        if (!current) return;
+        const shouldDelete = window.confirm(`Delete "${current.title || 'Untitled project'}"? This cannot be undone.`);
+        if (!shouldDelete) return;
+        const nextProjects = projects.filter((project) => project.id !== selectedProjectId);
+        setProjects(nextProjects);
+        if (nextProjects.length > 0) {
+            setSelectedProjectId(nextProjects[0].id);
+            setProjectForm(toFormState(nextProjects[0]));
+            setIsNewProject(false);
+        } else {
+            const fresh = createProjectTemplate(1);
+            setSelectedProjectId(fresh.id);
+            setProjectForm(toFormState(fresh));
+            setIsNewProject(true);
+        }
+        await persistProjects(nextProjects, 'Project deleted');
+    };
+
+    const handleProjectUpload = async (file) => {
+        if (!file) return;
+        setUploadingImage(true);
+        setProjectsStatus({ message: 'Uploading image...', type: 'info' });
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch('/api/admin/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) throw new Error('Failed to upload image');
+            const result = await res.json();
+            setProjectForm((prev) => ({ ...prev, image: result.url || prev.image }));
+            setProjectsStatus({ message: 'Image uploaded', type: 'success' });
+        } catch (error) {
+            setProjectsStatus({ message: error.message, type: 'error' });
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'Projects') {
+            fetchProjects();
+        }
+    }, [activeTab]);
 
     const handleLogout = async () => {
         try {
@@ -112,23 +322,37 @@ export default function AdminDashboard() {
     const navItems = [
         { icon: Icons.Dashboard, label: 'Overview' },
         { icon: Icons.Blogs, label: 'Blogs' },
+        { icon: Icons.Projects, label: 'Projects' },
         { icon: Icons.Database, label: 'Configuration' },
         { icon: Icons.Settings, label: 'Settings' }
     ];
 
+    const ghostButtonClass = 'inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-text-primary)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-60';
+    const primaryButtonClass = 'inline-flex items-center justify-center rounded-lg bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold text-[var(--color-bg)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60';
+    const dangerButtonClass = 'inline-flex items-center justify-center rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60';
+    const inputClass = 'w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-text-primary)]';
+    const textareaClass = `${inputClass} resize-none`;
+
+    const statusToneClasses = {
+        success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+        error: 'border-red-200 bg-red-50 text-red-600',
+        info: 'border-blue-200 bg-blue-50 text-blue-600'
+    };
+    const getStatusClass = (tone) => statusToneClasses[tone] || 'border-transparent text-[var(--color-text-secondary)]';
+
     return (
-        <div className="admin">
+        <div className="flex min-h-screen bg-[var(--color-bg)] text-[var(--color-text-primary)]">
             {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(null)}>
-                    <div className="modal" onClick={e => e.stopPropagation()}>
-                        <h3>{showModal === 'restore' ? 'Restore Default' : 'Update Data'}</h3>
-                        <p>{showModal === 'restore'
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50" onClick={() => setShowModal(null)}>
+                    <div className="w-[90%] max-w-[360px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-base font-semibold">{showModal === 'restore' ? 'Restore Default' : 'Update Data'}</h3>
+                        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{showModal === 'restore'
                             ? 'This will reset all configurations. Continue?'
                             : 'This will update documents matching the filter. Continue?'}
                         </p>
-                        <div className="modal-actions">
-                            <button onClick={() => setShowModal(null)} className="modal-cancel">Cancel</button>
-                            <button onClick={() => { showModal === 'restore' ? handleRestore() : handleSubmit(); setShowModal(null); }} className="modal-confirm">
+                        <div className="mt-5 flex justify-end gap-3">
+                            <button onClick={() => setShowModal(null)} className={ghostButtonClass}>Cancel</button>
+                            <button onClick={() => { showModal === 'restore' ? handleRestore() : handleSubmit(); setShowModal(null); }} className={primaryButtonClass}>
                                 Confirm
                             </button>
                         </div>
@@ -136,22 +360,22 @@ export default function AdminDashboard() {
                 </div>
             )}
 
-            {isMobileMenuOpen && <div className="overlay" onClick={() => setIsMobileMenuOpen(false)} />}
+            {isMobileMenuOpen && <div className="fixed inset-0 z-[90] bg-black/40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />}
 
-            <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
-                <div className="sidebar-header">
-                    <span className="logo">Admin</span>
-                    <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
+            <aside className={`fixed left-0 top-0 z-[100] flex h-screen w-[260px] flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-transform md:sticky md:top-0 md:w-[220px] ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+                <div className="mb-6 flex items-center justify-between">
+                    <span className="text-base font-semibold">Admin</span>
+                    <button className="p-1 text-[var(--color-text-secondary)] md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
                         <Icons.Close />
                     </button>
                 </div>
 
-                <nav className="sidebar-nav">
+                <nav className="flex flex-1 flex-col gap-1">
                     {navItems.map(({ icon: Icon, label }) => (
                         <button
                             key={label}
                             onClick={() => { setActiveTab(label); setIsMobileMenuOpen(false); }}
-                            className={`nav-item ${activeTab === label ? 'active' : ''}`}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${activeTab === label ? 'bg-[var(--color-bg)] font-medium text-[var(--color-text-primary)]' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-text-primary)]'}`}
                         >
                             <Icon />
                             <span>{label}</span>
@@ -159,62 +383,62 @@ export default function AdminDashboard() {
                     ))}
                 </nav>
 
-                <button onClick={handleLogout} className="logout-btn">
+                <button onClick={handleLogout} className="mt-4 flex items-center gap-3 px-3 py-2.5 text-sm text-red-500">
                     <Icons.Logout />
                     <span>Logout</span>
                 </button>
             </aside>
 
-            <main className="main">
-                <header className="topbar">
-                    <div className="topbar-left">
-                        <button className="menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+            <main className="flex min-w-0 flex-1 flex-col">
+                <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 backdrop-blur md:flex-nowrap">
+                    <div className="flex items-center gap-3">
+                        <button className="p-1 text-[var(--color-text-primary)] md:hidden" onClick={() => setIsMobileMenuOpen(true)}>
                             <Icons.Menu />
                         </button>
                         <div>
-                            <p className="eyebrow">Admin Console</p>
-                            <h1 className="page-title">{activeTab}</h1>
+                            <p className="mb-0.5 text-[0.75rem] uppercase tracking-[0.02em] text-[var(--color-text-muted)]">Admin Console</p>
+                            <h1 className="text-[1.125rem] font-semibold">{activeTab}</h1>
                         </div>
                     </div>
                 </header>
 
-                <div className="content">
-                    <div className="content-shell">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5">
                         {activeTab === 'Overview' && (
-                            <div className="overview">
-                                <div className="stats-grid">
-                                    <div className="stat-card">
-                                        <span className="stat-label">Projects</span>
-                                        <span className="stat-value">14</span>
+                            <div className="flex flex-col gap-6">
+                                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                                        <span className="text-[0.75rem] text-[var(--color-text-muted)]">Projects</span>
+                                        <span className="mt-1 block text-[1.5rem] font-semibold">14</span>
                                     </div>
-                                    <div className="stat-card">
-                                        <span className="stat-label">Skills</span>
-                                        <span className="stat-value">28</span>
+                                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                                        <span className="text-[0.75rem] text-[var(--color-text-muted)]">Skills</span>
+                                        <span className="mt-1 block text-[1.5rem] font-semibold">28</span>
                                     </div>
-                                    <div className="stat-card">
-                                        <span className="stat-label">Live Sites</span>
-                                        <span className="stat-value">3</span>
+                                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                                        <span className="text-[0.75rem] text-[var(--color-text-muted)]">Live Sites</span>
+                                        <span className="mt-1 block text-[1.5rem] font-semibold">3</span>
                                     </div>
                                 </div>
 
-                                <div className="recent-activity">
-                                    <div className="section-header">
-                                        <h3>Recent Activity</h3>
-                                        <span className="section-hint">Latest changes across the portfolio</span>
+                                <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                                    <div className="mb-3 flex items-center justify-between gap-3">
+                                        <h3 className="text-[0.9375rem] font-semibold">Recent Activity</h3>
+                                        <span className="text-[0.8125rem] text-[var(--color-text-muted)]">Latest changes across the portfolio</span>
                                     </div>
-                                    <div className="activity-list">
-                                        <div className="activity-item">
-                                            <span className="activity-dot"></span>
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex gap-3">
+                                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]"></span>
                                             <div>
-                                                <span className="activity-text">Updated skills data</span>
-                                                <span className="activity-time">2 hours ago</span>
+                                                <span className="block text-sm">Updated skills data</span>
+                                                <span className="block text-xs text-[var(--color-text-muted)]">2 hours ago</span>
                                             </div>
                                         </div>
-                                        <div className="activity-item">
-                                            <span className="activity-dot"></span>
+                                        <div className="flex gap-3">
+                                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]"></span>
                                             <div>
-                                                <span className="activity-text">New project added</span>
-                                                <span className="activity-time">Yesterday</span>
+                                                <span className="block text-sm">New project added</span>
+                                                <span className="block text-xs text-[var(--color-text-muted)]">Yesterday</span>
                                             </div>
                                         </div>
                                     </div>
@@ -224,11 +448,11 @@ export default function AdminDashboard() {
 
                         {activeTab === 'Blogs' && (
                             view === 'list' ? (
-                                <div className="blog-list-shell">
+                                <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] py-2">
                                     <BlogList onEdit={handleBlogEdit} theme="light" />
                                 </div>
                             ) : (
-                                <div className="blog-editor-shell">
+                                <div className="bg-transparent">
                                     <TipTapEditorWrapper
                                         blog={currentBlog}
                                         onSave={handleBlogSave}
@@ -239,33 +463,249 @@ export default function AdminDashboard() {
                             )
                         )}
 
-                        {activeTab === 'Configuration' && (
-                            <div className="config-shell">
-                                <div className="config-controls">
-                                    <div className="method-toggle">
-                                        <button onClick={() => setMethod('GET')} className={method === 'GET' ? 'active' : ''}>GET</button>
-                                        <button onClick={() => setMethod('POST')} className={method === 'POST' ? 'active' : ''}>POST</button>
+                        {activeTab === 'Projects' && (
+                            <div className="flex flex-col gap-6">
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                    <div>
+                                        <h3 className="text-lg font-semibold">Projects</h3>
+                                        <p className="text-sm text-[var(--color-text-secondary)]">Create, update, and feature projects shown on the homepage.</p>
                                     </div>
-                                    <div className="config-actions">
-                                        <button onClick={() => method === 'GET' ? handleSubmit() : setShowModal('update')} className="action-btn primary">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <button onClick={fetchProjects} className={ghostButtonClass} disabled={projectsLoading}>
+                                            {projectsLoading ? 'Refreshing...' : 'Refresh'}
+                                        </button>
+                                        <button onClick={handleProjectNew} className={ghostButtonClass}>
+                                            New Project
+                                        </button>
+                                        <button onClick={handleProjectSave} className={primaryButtonClass} disabled={projectsSaving || !projectForm}>
+                                            {projectsSaving ? 'Saving...' : isNewProject ? 'Create Project' : 'Save Changes'}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {projectsStatus.message && (
+                                    <div className={`rounded-lg border px-3 py-2 text-sm ${getStatusClass(projectsStatus.type)}`}>{projectsStatus.message}</div>
+                                )}
+
+                                <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+                                    <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+                                        <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3 text-xs uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                                            <span>All Projects</span>
+                                            <span>{projects.length}</span>
+                                        </div>
+                                        <div className="flex max-h-[640px] flex-col overflow-y-auto">
+                                            {projectsLoading && (
+                                                <div className="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">Loading projects...</div>
+                                            )}
+                                            {!projectsLoading && projects.length === 0 && (
+                                                <div className="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">No projects yet. Create your first one.</div>
+                                            )}
+                                            {!projectsLoading && projects.map((project) => (
+                                                <button
+                                                    key={project.id}
+                                                    className={`flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-3 text-left transition-colors last:border-b-0 ${selectedProjectId === project.id ? 'bg-[var(--color-bg)] text-[var(--color-text-primary)]' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-text-primary)]'}`}
+                                                    onClick={() => handleProjectSelect(project)}
+                                                >
+                                                    <div>
+                                                        <span className="block text-sm font-medium">{project.title || 'Untitled project'}</span>
+                                                        <span className="block text-xs text-[var(--color-text-muted)]">{project.category || 'Uncategorized'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs">
+                                                        {project.featured && <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-0.5 text-[0.625rem] uppercase tracking-[0.08em] text-[var(--color-text-secondary)]">Featured</span>}
+                                                        <span className="text-[0.7rem] text-[var(--color-text-muted)]">#{project.id}</span>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                                        {projectForm ? (
+                                            <>
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Title</label>
+                                                        <input
+                                                            type="text"
+                                                            value={projectForm.title}
+                                                            onChange={(e) => handleProjectChange('title', e.target.value)}
+                                                            placeholder="Project title"
+                                                            className={inputClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Category</label>
+                                                        <input
+                                                            type="text"
+                                                            list="project-categories"
+                                                            value={projectForm.category}
+                                                            onChange={(e) => handleProjectChange('category', e.target.value)}
+                                                            placeholder="AI / Full Stack"
+                                                            className={inputClass}
+                                                        />
+                                                        <datalist id="project-categories">
+                                                            <option value="Full Stack" />
+                                                            <option value="Frontend" />
+                                                            <option value="Backend" />
+                                                            <option value="AI / Full Stack" />
+                                                            <option value="Hardware / Web" />
+                                                            <option value="Software" />
+                                                        </datalist>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 md:col-span-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Short Description</label>
+                                                        <textarea
+                                                            rows={2}
+                                                            value={projectForm.description}
+                                                            onChange={(e) => handleProjectChange('description', e.target.value)}
+                                                            placeholder="One-line summary for listings"
+                                                            className={textareaClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 md:col-span-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Long Description</label>
+                                                        <textarea
+                                                            rows={4}
+                                                            value={projectForm.longDescription}
+                                                            onChange={(e) => handleProjectChange('longDescription', e.target.value)}
+                                                            placeholder="Detailed description for featured section"
+                                                            className={textareaClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 md:col-span-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Technologies</label>
+                                                        <input
+                                                            type="text"
+                                                            value={projectForm.technologiesInput}
+                                                            onChange={(e) => handleProjectChange('technologiesInput', e.target.value)}
+                                                            placeholder="React, Next.js, Node.js"
+                                                            className={inputClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Live URL</label>
+                                                        <input
+                                                            type="url"
+                                                            value={projectForm.liveUrl}
+                                                            onChange={(e) => handleProjectChange('liveUrl', e.target.value)}
+                                                            placeholder="https://example.com"
+                                                            className={inputClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">GitHub URL</label>
+                                                        <input
+                                                            type="url"
+                                                            value={projectForm.githubUrl}
+                                                            onChange={(e) => handleProjectChange('githubUrl', e.target.value)}
+                                                            placeholder="https://github.com/..."
+                                                            className={inputClass}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2 md:col-span-2">
+                                                        <label className="text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Image</label>
+                                                        <div className="flex flex-col gap-3">
+                                                            <input
+                                                                type="url"
+                                                                value={projectForm.image}
+                                                                onChange={(e) => handleProjectChange('image', e.target.value)}
+                                                                placeholder="/uploads/project-image.jpg"
+                                                                className={inputClass}
+                                                            />
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                <label className={`${ghostButtonClass} cursor-pointer`} htmlFor="project-image-upload">
+                                                                    {uploadingImage ? 'Uploading...' : 'Upload'}
+                                                                </label>
+                                                                <input
+                                                                    id="project-image-upload"
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    onChange={(e) => handleProjectUpload(e.target.files?.[0])}
+                                                                    disabled={uploadingImage}
+                                                                    className="hidden"
+                                                                />
+                                                                {projectForm.image && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className={ghostButtonClass}
+                                                                        onClick={() => handleProjectChange('image', '')}
+                                                                    >
+                                                                        Clear
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            {projectForm.image && (
+                                                                <div className="aspect-video w-full overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
+                                                                    <img src={projectForm.image} alt="Project preview" className="h-full w-full object-cover" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--color-border)] pt-4">
+                                                    <label className="flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={projectForm.featured}
+                                                            onChange={(e) => handleProjectChange('featured', e.target.checked)}
+                                                            className="h-4 w-4 accent-[var(--color-accent)]"
+                                                        />
+                                                        <span>Feature this project on the home page</span>
+                                                    </label>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-xs text-[var(--color-text-muted)]">Project ID: {projectForm.id}</span>
+                                                        <button type="button" onClick={handleProjectDelete} className={dangerButtonClass}>
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">Select a project to edit.</div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'Configuration' && (
+                            <div className="flex flex-col gap-4">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                                        <button
+                                            onClick={() => setMethod('GET')}
+                                            className={`px-4 py-2 text-[0.78rem] font-semibold transition-colors ${method === 'GET' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                                        >
+                                            GET
+                                        </button>
+                                        <button
+                                            onClick={() => setMethod('POST')}
+                                            className={`px-4 py-2 text-[0.78rem] font-semibold transition-colors ${method === 'POST' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900'}`}
+                                        >
+                                            POST
+                                        </button>
+                                    </div>
+                                    <div className="flex w-full flex-wrap gap-2 justify-start md:ml-auto md:w-auto md:justify-end">
+                                        <button onClick={() => method === 'GET' ? handleSubmit() : setShowModal('update')} className={primaryButtonClass}>
                                             {method === 'GET' ? 'Fetch' : 'Update'}
                                         </button>
-                                        <button onClick={() => setShowModal('restore')} className="action-btn danger">Reset</button>
+                                        <button onClick={() => setShowModal('restore')} className={dangerButtonClass}>Reset</button>
                                     </div>
                                 </div>
 
                                 {status.message && (
-                                    <div className={`status-message ${status.type}`}>{status.message}</div>
+                                    <div className={`rounded-lg border px-3 py-2 text-sm ${getStatusClass(status.type)}`}>{status.message}</div>
                                 )}
 
-                                <div className="config-grid">
-                                    <div className="editor-section">
-                                        <div className="editor-header">
-                                            <span className="editor-title">Filter</span>
+                                <div className="grid gap-4 lg:grid-cols-[minmax(260px,340px)_minmax(0,1fr)]">
+                                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                                        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+                                            <span className="text-[0.8rem] font-mono text-slate-600">Filter</span>
                                         </div>
-                                        <div className="editor-wrapper filter">
+                                        <div className="relative h-[clamp(220px,26vh,320px)] min-h-[220px] border-t border-slate-200 bg-slate-50">
                                             {!filterValue?.trim() && (
-                                                <div className="filter-placeholder">
+                                                <div className="pointer-events-none absolute left-3 top-2.5 z-10 text-[0.85rem] font-mono text-slate-400">
                                                     {'{ "documentType": "skill" }'}
                                                 </div>
                                             )}
@@ -291,12 +731,14 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="editor-section">
-                                        <div className="editor-header">
-                                            <span className="editor-title">Data</span>
-                                            <span className={`editor-mode ${method}`}>{method === 'GET' ? 'Read Only' : 'Editable'}</span>
+                                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                                        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+                                            <span className="text-[0.8rem] font-mono text-slate-600">Data</span>
+                                            <span className={`rounded-md border px-2 py-0.5 text-[0.625rem] uppercase ${method === 'GET' ? 'border-blue-200 bg-blue-50 text-blue-500' : 'border-emerald-200 bg-emerald-50 text-emerald-500'}`}>
+                                                {method === 'GET' ? 'Read Only' : 'Editable'}
+                                            </span>
                                         </div>
-                                        <div className="editor-wrapper main">
+                                        <div className="h-[320px] min-h-[280px] border-t border-slate-200 bg-white md:h-[clamp(320px,60vh,760px)]">
                                             <Editor
                                                 height="100%"
                                                 defaultLanguage="json"
@@ -319,7 +761,7 @@ export default function AdminDashboard() {
                         )}
 
                         {activeTab === 'Settings' && (
-                            <div className="placeholder panel">
+                            <div className="flex h-[200px] items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm text-[var(--color-text-muted)]">
                                 <p>Settings coming soon...</p>
                             </div>
                         )}
@@ -327,534 +769,7 @@ export default function AdminDashboard() {
                 </div>
             </main>
 
-            <style jsx>{`
-                .admin {
-                    display: flex;
-                    min-height: 100vh;
-                    background-color: var(--color-bg);
-                }
-
-                .sidebar {
-                    width: 220px;
-                    background-color: var(--color-surface);
-                    border-right: 1px solid var(--color-border);
-                    display: flex;
-                    flex-direction: column;
-                    padding: 1.25rem;
-                    position: sticky;
-                    top: 0;
-                    height: 100vh;
-                }
-
-                .sidebar-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 1.5rem;
-                }
-
-                .logo {
-                    font-size: 1rem;
-                    font-weight: 600;
-                }
-
-                .close-btn {
-                    display: none;
-                    padding: 0.25rem;
-                    color: var(--color-text-secondary);
-                }
-
-                .sidebar-nav {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.25rem;
-                }
-
-                .nav-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 0.625rem 0.75rem;
-                    border-radius: var(--radius-sm);
-                    font-size: 0.875rem;
-                    color: var(--color-text-secondary);
-                    transition: all var(--transition-fast);
-                }
-
-                .nav-item:hover {
-                    background-color: var(--color-bg);
-                }
-
-                .nav-item.active {
-                    color: var(--color-text-primary);
-                    background-color: var(--color-bg);
-                    font-weight: 500;
-                }
-
-                .logout-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 0.625rem 0.75rem;
-                    font-size: 0.875rem;
-                    color: #ef4444;
-                    margin-top: 1rem;
-                }
-
-                .main {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                }
-
-                .topbar {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 1rem;
-                    padding: 1rem 1.5rem;
-                    border-bottom: 1px solid var(--color-border);
-                    position: sticky;
-                    top: 0;
-                    background-color: var(--color-surface);
-                    z-index: 10;
-                    backdrop-filter: blur(6px);
-                }
-
-                .topbar-left {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.85rem;
-                }
-
-                .menu-btn {
-                    display: none;
-                    padding: 0.25rem;
-                    color: var(--color-text-primary);
-                }
-
-                .page-title {
-                    font-size: 1.125rem;
-                    font-weight: 600;
-                }
-
-                .eyebrow {
-                    font-size: 0.75rem;
-                    color: var(--color-text-muted);
-                    margin: 0 0 2px 0;
-                    letter-spacing: 0.02em;
-                    text-transform: uppercase;
-                }
-
-                .content {
-                    flex: 1;
-                    padding: 1.5rem;
-                    overflow-y: auto;
-                }
-
-                .content-shell {
-                    max-width: 1400px;
-                    margin: 0 auto;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                }
-
-                .panel {
-                    background: var(--color-surface);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
-                    padding: 1.25rem;
-                    box-shadow: 0 18px 50px rgba(0,0,0,0.04);
-                }
-
-                .blog-list-shell {
-                    background: #fff;
-                    padding: 0.5rem 0;
-                    border-radius: var(--radius-md);
-                }
-
-                .blog-editor-shell {
-                    background: transparent;
-                }
-
-                .blog-editor-shell {
-                    background: transparent;
-                }
-
-                .stats-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                    gap: 1rem;
-                    margin-bottom: 1.5rem;
-                }
-
-                .stat-card {
-                    padding: 1.25rem;
-                    background-color: var(--color-surface);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
-                    box-shadow: 0 12px 40px rgba(0,0,0,0.04);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.35rem;
-                }
-
-                .stat-label {
-                    display: block;
-                    font-size: 0.75rem;
-                    color: var(--color-text-muted);
-                    margin-bottom: 0.25rem;
-                }
-
-                .stat-value {
-                    font-size: 1.5rem;
-                    font-weight: 600;
-                }
-
-                .recent-activity {
-                    padding: 1.25rem;
-                    background-color: var(--color-surface);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
-                    box-shadow: 0 18px 50px rgba(0,0,0,0.04);
-                }
-
-                .section-header {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 0.75rem;
-                    margin-bottom: 0.75rem;
-                }
-
-                .section-hint {
-                    font-size: 0.8125rem;
-                    color: var(--color-text-muted);
-                }
-
-                .recent-activity h3 {
-                    font-size: 0.9375rem;
-                    font-weight: 600;
-                    margin-bottom: 1rem;
-                }
-
-                .activity-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.75rem;
-                }
-
-                .activity-item {
-                    display: flex;
-                    gap: 0.75rem;
-                }
-
-                .activity-dot {
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                    background-color: var(--color-accent);
-                    margin-top: 6px;
-                }
-
-                .activity-text {
-                    display: block;
-                    font-size: 0.875rem;
-                }
-
-                .activity-time {
-                    display: block;
-                    font-size: 0.75rem;
-                    color: var(--color-text-muted);
-                }
-
-                .config-shell {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                    padding: 0;
-                    background: transparent;
-                    border: none;
-                    box-shadow: none;
-                }
-
-                .config-controls {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    flex-wrap: wrap;
-                }
-
-                .method-toggle {
-                    display: flex;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 10px;
-                    overflow: hidden;
-                    background: #f8fafc;
-                }
-
-                .method-toggle button {
-                    padding: 0.6rem 1.2rem;
-                    font-size: 0.78rem;
-                    font-weight: 600;
-                    background-color: transparent;
-                    color: #475569;
-                    transition: all var(--transition-fast);
-                }
-
-                .method-toggle button.active {
-                    background-color: #0f172a;
-                    color: #fff;
-                }
-
-                .config-actions {
-                    display: flex;
-                    gap: 0.5rem;
-                    margin-left: auto;
-                }
-
-                .action-btn {
-                    padding: 0.6rem 1.1rem;
-                    font-size: 0.82rem;
-                    font-weight: 600;
-                    border-radius: 10px;
-                    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-                    border: 1px solid transparent;
-                }
-
-                .action-btn.primary {
-                    background-color: #0f172a;
-                    color: #fff;
-                    box-shadow: 0 10px 30px rgba(15,23,42,0.18);
-                }
-
-                .action-btn.danger {
-                    background-color: #fff;
-                    border: 1px solid #fecaca;
-                    color: #ef4444;
-                }
-
-                .status-message {
-                    padding: 0.625rem 0.875rem;
-                    border-radius: 10px;
-                    font-size: 0.85rem;
-                    border: 1px solid transparent;
-                }
-
-                .status-message.success {
-                    background-color: #ecfdf3;
-                    color: #15803d;
-                    border: 1px solid #bbf7d0;
-                }
-
-                .status-message.error {
-                    background-color: #fef2f2;
-                    color: #dc2626;
-                    border: 1px solid #fecaca;
-                }
-
-                .status-message.info {
-                    background-color: #eff6ff;
-                    color: #2563eb;
-                    border: 1px solid #bfdbfe;
-                }
-
-                .config-grid {
-                    display: grid;
-                    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
-                    gap: 1rem;
-                    align-items: start;
-                }
-
-                .editor-section {
-                    border: 1px solid #e2e8f0;
-                    border-radius: 14px;
-                    overflow: hidden;
-                    background: #fff;
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-                }
-
-                .editor-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 0.65rem 0.9rem;
-                    background-color: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                }
-
-                .editor-title {
-                    font-size: 0.8rem;
-                    color: #475569;
-                    font-family: 'SF Mono', Menlo, monospace;
-                }
-
-                .editor-mode {
-                    font-size: 0.625rem;
-                    padding: 0.125rem 0.375rem;
-                    border-radius: 6px;
-                    text-transform: uppercase;
-                    border: 1px solid #e2e8f0;
-                    background: #fff;
-                }
-
-                .editor-mode.GET {
-                    background-color: rgba(59,130,246,0.2);
-                    color: #60a5fa;
-                }
-
-                .editor-mode.POST {
-                    background-color: rgba(34,197,94,0.2);
-                    color: #4ade80;
-                }
-
-                .editor-wrapper.filter {
-                    position: relative;
-                    height: clamp(220px, 26vh, 320px);
-                    min-height: 220px;
-                    background: #f8fafc;
-                    border-top: 1px solid #e2e8f0;
-                }
-
-                .filter-placeholder {
-                    position: absolute;
-                    top: 10px;
-                    left: 12px;
-                    color: #94a3b8;
-                    font-size: 0.85rem;
-                    font-family: 'SF Mono', Menlo, monospace;
-                    pointer-events: none;
-                    z-index: 1;
-                }
-
-                .editor-wrapper.main {
-                    height: clamp(320px, 60vh, 760px);
-                    min-height: 280px;
-                    background: #fff;
-                    border-top: 1px solid #e2e8f0;
-                }
-
-                .placeholder {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 200px;
-                    color: var(--color-text-muted);
-                }
-
-                .overlay {
-                    position: fixed;
-                    inset: 0;
-                    background-color: rgba(0,0,0,0.5);
-                    z-index: 99;
-                }
-
-                .modal-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background-color: rgba(0,0,0,0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                }
-
-                .modal {
-                    background-color: var(--color-surface);
-                    padding: 1.5rem;
-                    border-radius: var(--radius-md);
-                    border: 1px solid var(--color-border);
-                    max-width: 360px;
-                    width: 90%;
-                }
-
-                .modal h3 {
-                    font-size: 1rem;
-                    font-weight: 600;
-                    margin-bottom: 0.5rem;
-                }
-
-                .modal p {
-                    font-size: 0.875rem;
-                    color: var(--color-text-secondary);
-                    margin-bottom: 1.25rem;
-                }
-
-                .modal-actions {
-                    display: flex;
-                    gap: 0.75rem;
-                    justify-content: flex-end;
-                }
-
-                .modal-cancel {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.8125rem;
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-sm);
-                }
-
-                .modal-confirm {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.8125rem;
-                    background-color: var(--color-accent);
-                    color: var(--color-bg);
-                    border-radius: var(--radius-sm);
-                }
-
-                @media (max-width: 768px) {
-                    .sidebar {
-                        position: fixed;
-                        left: -260px;
-                        top: 0;
-                        z-index: 100;
-                        width: 260px;
-                        transition: left 0.2s ease;
-                    }
-
-                    .sidebar.open {
-                        left: 0;
-                    }
-
-                    .close-btn {
-                        display: block;
-                    }
-
-                    .menu-btn {
-                        display: block;
-                    }
-
-                    .topbar {
-                        flex-wrap: wrap;
-                    }
-
-                    .content {
-                        padding: 1rem;
-                    }
-
-                    .config-actions {
-                        margin-left: 0;
-                        width: 100%;
-                        justify-content: flex-start;
-                    }
-
-                    .config-grid {
-                        grid-template-columns: 1fr;
-                    }
-
-                    .editor-wrapper.main {
-                        height: 320px;
-                    }
-                }
-
-                @media (max-width: 480px) {
-                    .stats-grid {
-                        grid-template-columns: 1fr;
-                    }
-                }
-            `}</style>
+            
         </div>
     );
 }

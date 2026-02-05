@@ -1,4 +1,7 @@
 ## Feature
+- Implemented a UI through which we can create projects.
+
+## Feature
 - Implemented a Blogs Reader and Writer.
 - Now we can read and write blogs in a Markdown format. 
 - Implemented a TipTap editor for blogs.
