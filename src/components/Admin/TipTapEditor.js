@@ -109,6 +109,15 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
     const [featuredImage, setFeaturedImage] = useState(blog?.featuredImage || '')
     const [isSaving, setIsSaving] = useState(false)
     const [lastSaved, setLastSaved] = useState(null)
+    const [stats, setStats] = useState({ words: 0, chars: 0, minutes: 1 })
+
+    const updateStats = (text) => {
+        const trimmed = text.trim()
+        const words = trimmed ? trimmed.split(/\s+/).length : 0
+        const chars = trimmed.length
+        const minutes = Math.max(1, Math.round(words / 200))
+        setStats({ words, chars, minutes })
+    }
 
     const editor = useEditor({
         immediatelyRender: false,
@@ -144,14 +153,22 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
             if (plainText && !excerpt) {
                 setExcerpt(plainText.substring(0, 150) + '...')
             }
+            updateStats(plainText)
         },
     })
 
     useEffect(() => {
         if (editor && blog?.content) {
             editor.commands.setContent(blog.content)
+            updateStats(editor.getText())
         }
     }, [blog?.content, editor])
+
+    useEffect(() => {
+        if (editor) {
+            updateStats(editor.getText())
+        }
+    }, [editor])
 
     const handleSave = async (saveStatus = status) => {
         if (!title.trim() || !editor?.getText().trim()) {
@@ -207,12 +224,12 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
     return (
         <>
             <Toaster position="top-right" />
-            <div className="notion-blog-editor">
+            <div className="notion-blog-editor bg-white text-slate-900">
                 {/* Compact Header */}
-                <header className="notion-editor-header">
+                <header className="notion-editor-header sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/90 px-6 py-4 backdrop-blur">
                     <div className="notion-editor-header-left">
                         <button type="button" onClick={onCancel} className="notion-btn notion-btn-ghost">
-                            ← Back
+                            Back
                         </button>
                         {lastSaved && (
                             <span className="notion-last-saved">
@@ -240,18 +257,34 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                     </div>
                 </header>
 
-                <div className="notion-editor-layout">
+                <div className="notion-meta-bar sticky top-[72px] z-20 grid grid-cols-1 gap-2 border-b border-slate-100/80 bg-white/85 px-6 py-3 backdrop-blur sm:grid-cols-[auto_1fr] lg:grid-cols-[auto_1fr_auto]">
+                    <span className={`notion-pill ${status}`}>{status === 'published' ? 'Published' : 'Draft'}</span>
+                    <div className="notion-meta-group">
+                        <span>{stats.words} words</span>
+                        <span className="meta-divider">|</span>
+                        <span>~{stats.minutes} min read</span>
+                        <span className="meta-divider">|</span>
+                        <span>{stats.chars} chars</span>
+                    </div>
+                    <div className="notion-meta-group subtle">
+                        <span>{blog?.title ? 'Editing existing post' : 'New blog post'}</span>
+                        {lastSaved && <span className="meta-divider">|</span>}
+                        {lastSaved && <span>Last saved {format(lastSaved, 'MMM d, HH:mm')}</span>}
+                    </div>
+                </div>
+
+                <div className="notion-editor-layout mx-auto grid max-w-screen-2xl gap-10 px-6 pb-16 pt-8 lg:px-10 xl:grid-cols-[minmax(0,1fr)_300px]">
                     {/* Main Editor */}
-                    <div className="notion-editor-main">
+                    <div className="notion-editor-main min-w-0 space-y-6">
                         <input
                             type="text"
                             placeholder="Untitled"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="notion-title-input"
+                            className="notion-title-input w-full border-0 bg-transparent text-4xl font-semibold leading-tight tracking-tight text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-0 md:text-5xl"
                         />
 
-                        <div className="notion-editor-wrapper">
+                        <div className="notion-editor-wrapper rounded-2xl bg-white p-4 md:p-6">
                             {editor && (
                                 <BubbleMenu
                                     editor={editor}
@@ -305,7 +338,7 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                                             if (url) editor.chain().focus().setImage({ src: url }).run()
                                         }}
                                     >
-                                        🖼
+                                        Image
                                     </button>
                                 </BubbleMenu>
                             )}
@@ -314,8 +347,8 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                     </div>
 
                     {/* Sidebar */}
-                    <aside className="notion-editor-sidebar">
-                        <div className="notion-sidebar-section">
+                    <aside className="notion-editor-sidebar xl:ml-auto flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 xl:sticky xl:top-28 xl:h-fit xl:gap-5">
+                        <div className="notion-sidebar-section space-y-2">
                             <label>Excerpt</label>
                             <textarea
                                 placeholder="Brief description..."
@@ -332,7 +365,7 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                                 onChange={(e) => setAuthor(e.target.value)}
                             />
                         </div>
-                        <div className="notion-sidebar-section">
+                        <div className="notion-sidebar-section space-y-2">
                             <label>Tags</label>
                             <input
                                 type="text"
@@ -341,7 +374,7 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                                 onChange={(e) => setTags(e.target.value)}
                             />
                         </div>
-                        <div className="notion-sidebar-section">
+                        <div className="notion-sidebar-section space-y-2">
                             <label>Featured Image</label>
                             <input
                                 type="url"
@@ -350,7 +383,7 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                                 onChange={(e) => setFeaturedImage(e.target.value)}
                             />
                         </div>
-                        <div className="notion-sidebar-section">
+                        <div className="notion-sidebar-section space-y-2">
                             <label>Status</label>
                             <select value={status} onChange={(e) => setStatus(e.target.value)}>
                                 <option value="draft">Draft</option>
@@ -364,8 +397,8 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
             <style jsx global>{`
                 .notion-blog-editor {
                     min-height: 100vh;
-                    background: var(--color-bg);
-                    color: var(--color-text-primary);
+                    background: #fff;
+                    color: #0f172a;
                 }
 
                 .notion-editor-loading {
@@ -392,12 +425,8 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                 }
 
                 .notion-editor-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 12px 24px;
-                    border-bottom: 1px solid var(--color-border);
-                    background: var(--color-surface);
+                    border-bottom: 1px solid #e5e7eb;
+                    background: #ffffffeb;
                 }
 
                 .notion-editor-header-left {
@@ -409,6 +438,45 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                 .notion-last-saved {
                     font-size: 12px;
                     color: var(--color-text-muted);
+                }
+
+                .notion-meta-bar {
+                    border-bottom: 1px solid #e5e7eb;
+                }
+
+                .notion-meta-group {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #475569;
+                    font-size: 13px;
+                    flex-wrap: wrap;
+                }
+
+                .notion-meta-group.subtle {
+                    justify-content: flex-end;
+                }
+
+                .meta-divider {
+                    color: #e2e8f0;
+                }
+
+                .notion-pill {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: capitalize;
+                    border: 1px solid #e2e8f0;
+                    background: #f8fafc;
+                }
+
+                .notion-pill.published {
+                    color: var(--color-accent);
+                    border-color: var(--color-accent);
+                    background: rgba(0,0,0,0.03);
                 }
 
                 .notion-btn {
@@ -460,35 +528,22 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                     gap: 8px;
                 }
 
+                .notion-mobile-actions {
+                    display: none;
+                    position: sticky;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    padding: 12px 16px;
+                    background: var(--color-surface);
+                    border-top: 1px solid var(--color-border);
+                    justify-content: space-between;
+                    gap: 12px;
+                    z-index: 6;
+                }
+
                 .notion-editor-layout {
-                    display: grid;
-                    grid-template-columns: 1fr 280px;
-                    max-width: 900px;
-                    margin: 0 auto;
-                    min-height: calc(100vh - 60px);
-                }
-
-                .notion-editor-main {
-                    padding: 48px 48px 80px 48px;
-                    min-width: 0;
-                }
-
-                .notion-title-input {
-                    width: 100%;
-                    padding: 8px 0;
-                    font-size: 2.75rem;
-                    font-weight: 700;
-                    line-height: 1.2;
-                    letter-spacing: -0.02em;
-                    border: none;
-                    background: transparent;
-                    color: var(--color-text-primary);
-                    outline: none;
-                    margin-bottom: 24px;
-                }
-
-                .notion-title-input::placeholder {
-                    color: var(--color-text-muted);
+                    min-height: calc(100vh - 160px);
                 }
 
                 .notion-editor-wrapper {
@@ -653,36 +708,35 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                     margin: 0 4px;
                 }
 
-                .notion-editor-sidebar {
-                    padding: 24px;
-                    border-left: 1px solid var(--color-border);
-                    background: var(--color-surface);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-                }
-
                 .notion-sidebar-section label {
                     display: block;
                     font-size: 11px;
                     font-weight: 600;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
-                    color: var(--color-text-muted);
-                    margin-bottom: 6px;
+                    color: #94a3b8;
                 }
 
                 .notion-sidebar-section input,
                 .notion-sidebar-section textarea,
                 .notion-sidebar-section select {
                     width: 100%;
-                    padding: 8px 12px;
+                    padding: 10px 12px;
                     font-size: 14px;
-                    border: 1px solid var(--color-border);
-                    border-radius: 6px;
-                    background: var(--color-bg);
-                    color: var(--color-text-primary);
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    background: #fff;
+                    color: #0f172a;
                     font-family: inherit;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                }
+
+                .notion-sidebar-section input:focus,
+                .notion-sidebar-section textarea:focus,
+                .notion-sidebar-section select:focus {
+                    outline: none;
+                    border-color: #cbd5e1;
+                    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
                 }
 
                 .notion-sidebar-section textarea {
@@ -735,6 +789,15 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
                 }
 
                 @media (max-width: 768px) {
+                    .notion-meta-bar {
+                        grid-template-columns: 1fr;
+                        align-items: flex-start;
+                    }
+
+                    .notion-meta-group.subtle {
+                        justify-content: flex-start;
+                    }
+
                     .notion-editor-layout {
                         grid-template-columns: 1fr;
                     }
@@ -749,7 +812,15 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
 
                     .notion-editor-sidebar {
                         border-left: none;
-                        border-top: 1px solid var(--color-border);
+                        border-top: 1px solid #e5e7eb;
+                    }
+
+                    .notion-mobile-actions {
+                        display: flex;
+                    }
+
+                    .notion-editor-actions {
+                        display: none;
                     }
                 }
             `}</style>
@@ -758,3 +829,5 @@ const TipTapEditor = ({ blog = null, onSave, onCancel, theme = 'light' }) => {
 }
 
 export default TipTapEditor
+
+

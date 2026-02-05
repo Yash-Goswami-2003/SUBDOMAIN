@@ -84,9 +84,11 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
         <>
             <Toaster position="top-right" />
             <div className="blog-list" style={{
-                backgroundColor: 'var(--color-bg)',
-                color: 'var(--color-text-primary)',
-                padding: '20px'
+                backgroundColor: '#fff',
+                color: '#0f172a',
+                padding: '12px 0',
+                maxWidth: '1160px',
+                margin: '0 auto'
             }}>
                 {/* Header */}
                 <div style={{
@@ -102,13 +104,13 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                             fontSize: '28px',
                             fontWeight: '700',
                             margin: 0,
-                            color: 'var(--color-text-primary)'
+                            color: '#0f172a'
                         }}>
                             Blogs
                         </h1>
                         <p style={{
                             fontSize: '14px',
-                            color: 'var(--color-text-secondary)',
+                            color: '#64748b',
                             margin: '4px 0 0 0'
                         }}>
                             Manage your blog posts
@@ -117,17 +119,19 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                     <button
                         onClick={() => onEdit(null)}
                         style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
+                            padding: '10px 18px',
+                            backgroundColor: '#0f172a',
+                            color: '#fff',
+                            border: '1px solid #0f172a',
+                            borderRadius: '999px',
                             fontSize: '14px',
-                            fontWeight: '500',
+                            fontWeight: '600',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px'
+                            gap: '8px',
+                            boxShadow: '0 12px 30px rgba(15,23,42,0.12)',
+                            transition: 'transform 0.15s ease, box-shadow 0.15s ease'
                         }}
                     >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -141,9 +145,10 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                 {/* Filters */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: '1fr auto',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: '16px',
-                    marginBottom: '24px'
+                    marginBottom: '24px',
+                    alignItems: 'center'
                 }}>
                     <input
                         type="text"
@@ -152,10 +157,10 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{
                             padding: '10px 16px',
-                            border: `1px solid var(--color-border)`,
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--color-bg)',
-                            color: 'var(--color-text-primary)',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '10px',
+                            backgroundColor: '#fff',
+                            color: '#0f172a',
                             fontSize: '14px'
                         }}
                     />
@@ -164,10 +169,10 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                         onChange={(e) => setStatusFilter(e.target.value)}
                         style={{
                             padding: '10px 16px',
-                            border: `1px solid var(--color-border)`,
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--color-bg)',
-                            color: 'var(--color-text-primary)',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '10px',
+                            backgroundColor: '#fff',
+                            color: '#0f172a',
                             fontSize: '14px'
                         }}
                     >
@@ -184,13 +189,6 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                         padding: '60px 20px',
                         color: 'var(--color-text-secondary)'
                     }}>
-                        <div style={{
-                            fontSize: '48px',
-                            marginBottom: '16px',
-                            opacity: 0.3
-                        }}>
-                            📝
-                        </div>
                         <h3 style={{
                             fontSize: '18px',
                             fontWeight: '600',
@@ -210,18 +208,20 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                     </div>
                 ) : (
                     <div style={{
-                        display: 'grid',
-                        gap: '16px'
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '14px'
                     }}>
                         {filteredBlogs.map((blog) => (
                             <div
                                 key={blog.id}
                                 style={{
-                                    padding: '20px',
-                                    border: `1px solid var(--color-border)`,
-                                    borderRadius: '12px',
-                                    backgroundColor: 'var(--color-bg-secondary)',
-                                    transition: 'all 0.2s ease'
+                                    padding: '18px 20px',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '14px',
+                                    backgroundColor: '#fff',
+                                    transition: 'all 0.2s ease',
+                                    boxShadow: '0 10px 30px rgba(15,23,42,0.04)'
                                 }}
                             >
                                 <div style={{
@@ -242,7 +242,7 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                                                 fontSize: '18px',
                                                 fontWeight: '600',
                                                 margin: 0,
-                                                color: 'var(--color-text-primary)',
+                                                color: '#0f172a',
                                                 cursor: 'pointer'
                                             }}>
                                                 {blog.title}
@@ -262,7 +262,7 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                                         
                                         <p style={{
                                             fontSize: '14px',
-                                            color: 'var(--color-text-secondary)',
+                                            color: '#475569',
                                             margin: '0 0 12px 0',
                                             lineHeight: '1.5'
                                         }}>
@@ -274,12 +274,12 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                                             alignItems: 'center',
                                             gap: '16px',
                                             fontSize: '12px',
-                                            color: 'var(--color-text-secondary)'
+                                            color: '#64748b'
                                         }}>
                                             <span>By {blog.author}</span>
-                                            <span>•</span>
+                                            <span>|</span>
                                             <span>{blog.readTime}</span>
-                                            <span>•</span>
+                                            <span>|</span>
                                             <span>
                                                 {blog.createdAt 
                                                     ? format(new Date(blog.createdAt), 'MMM dd, yyyy')
@@ -300,11 +300,11 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                                                         key={index}
                                                         style={{
                                                             padding: '2px 8px',
-                                                            backgroundColor: 'var(--color-bg)',
-                                                            color: 'var(--color-text-secondary)',
+                                                            backgroundColor: '#f8fafc',
+                                                            color: '#475569',
                                                             fontSize: '11px',
                                                             borderRadius: '12px',
-                                                            border: `1px solid var(--color-border)`
+                                                            border: '1px solid #e2e8f0'
                                                         }}
                                                     >
                                                         {tag}
@@ -326,7 +326,7 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
                                                 padding: '8px 12px',
                                                 backgroundColor: 'transparent',
                                                 color: 'var(--color-text-primary)',
-                                                border: `1px solid var(--color-border)`,
+                                                border: '1px solid #e2e8f0',
                                                 borderRadius: '6px',
                                                 fontSize: '12px',
                                                 cursor: 'pointer',
@@ -450,3 +450,4 @@ const BlogList = ({ onEdit, theme = 'light' }) => {
 }
 
 export default BlogList
+

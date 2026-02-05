@@ -167,140 +167,163 @@ export default function AdminDashboard() {
 
             <main className="main">
                 <header className="topbar">
-                    <button className="menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
-                        <Icons.Menu />
-                    </button>
-                    <h1 className="page-title">{activeTab}</h1>
+                    <div className="topbar-left">
+                        <button className="menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+                            <Icons.Menu />
+                        </button>
+                        <div>
+                            <p className="eyebrow">Admin Console</p>
+                            <h1 className="page-title">{activeTab}</h1>
+                        </div>
+                    </div>
                 </header>
 
                 <div className="content">
-                    {activeTab === 'Overview' && (
-                        <div className="overview">
-                            <div className="stats-grid">
-                                <div className="stat-card">
-                                    <span className="stat-label">Projects</span>
-                                    <span className="stat-value">14</span>
-                                </div>
-                                <div className="stat-card">
-                                    <span className="stat-label">Skills</span>
-                                    <span className="stat-value">28</span>
-                                </div>
-                                <div className="stat-card">
-                                    <span className="stat-label">Live Sites</span>
-                                    <span className="stat-value">3</span>
-                                </div>
-                            </div>
-
-                            <div className="recent-activity">
-                                <h3>Recent Activity</h3>
-                                <div className="activity-list">
-                                    <div className="activity-item">
-                                        <span className="activity-dot"></span>
-                                        <div>
-                                            <span className="activity-text">Updated skills data</span>
-                                            <span className="activity-time">2 hours ago</span>
-                                        </div>
+                    <div className="content-shell">
+                        {activeTab === 'Overview' && (
+                            <div className="overview">
+                                <div className="stats-grid">
+                                    <div className="stat-card">
+                                        <span className="stat-label">Projects</span>
+                                        <span className="stat-value">14</span>
                                     </div>
-                                    <div className="activity-item">
-                                        <span className="activity-dot"></span>
-                                        <div>
-                                            <span className="activity-text">New project added</span>
-                                            <span className="activity-time">Yesterday</span>
-                                        </div>
+                                    <div className="stat-card">
+                                        <span className="stat-label">Skills</span>
+                                        <span className="stat-value">28</span>
+                                    </div>
+                                    <div className="stat-card">
+                                        <span className="stat-label">Live Sites</span>
+                                        <span className="stat-value">3</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    )}
 
-                    {activeTab === 'Blogs' && (
-                        <div style={{ width: '100%' }}>
-                            {view === 'list' ? (
-                                <BlogList onEdit={handleBlogEdit} theme="light" />
+                                <div className="recent-activity">
+                                    <div className="section-header">
+                                        <h3>Recent Activity</h3>
+                                        <span className="section-hint">Latest changes across the portfolio</span>
+                                    </div>
+                                    <div className="activity-list">
+                                        <div className="activity-item">
+                                            <span className="activity-dot"></span>
+                                            <div>
+                                                <span className="activity-text">Updated skills data</span>
+                                                <span className="activity-time">2 hours ago</span>
+                                            </div>
+                                        </div>
+                                        <div className="activity-item">
+                                            <span className="activity-dot"></span>
+                                            <div>
+                                                <span className="activity-text">New project added</span>
+                                                <span className="activity-time">Yesterday</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'Blogs' && (
+                            view === 'list' ? (
+                                <div className="blog-list-shell">
+                                    <BlogList onEdit={handleBlogEdit} theme="light" />
+                                </div>
                             ) : (
-                                <TipTapEditorWrapper
-                                    blog={currentBlog}
-                                    onSave={handleBlogSave}
-                                    onCancel={handleBlogCancel}
-                                    theme="light"
-                                />
-                            )}
-                        </div>
-                    )}
-
-                    {activeTab === 'Configuration' && (
-                        <div className="config">
-                            <div className="config-controls">
-                                <div className="method-toggle">
-                                    <button onClick={() => setMethod('GET')} className={method === 'GET' ? 'active' : ''}>GET</button>
-                                    <button onClick={() => setMethod('POST')} className={method === 'POST' ? 'active' : ''}>POST</button>
-                                </div>
-                                <div className="config-actions">
-                                    <button onClick={() => method === 'GET' ? handleSubmit() : setShowModal('update')} className="action-btn primary">
-                                        {method === 'GET' ? 'Fetch' : 'Update'}
-                                    </button>
-                                    <button onClick={() => setShowModal('restore')} className="action-btn danger">Reset</button>
-                                </div>
-                            </div>
-
-                            {status.message && (
-                                <div className={`status-message ${status.type}`}>{status.message}</div>
-                            )}
-
-                            <div className="editor-section">
-                                <div className="editor-header">
-                                    <span className="editor-title">Filter</span>
-                                </div>
-                                <div className="editor-wrapper filter">
-                                    <Editor
-                                        height="100%"
-                                        defaultLanguage="json"
-                                        value={filterValue}
-                                        onChange={setFilterValue}
-                                        theme="vs-dark"
-                                        options={{
-                                            minimap: { enabled: false },
-                                            fontSize: 13,
-                                            scrollBeyondLastLine: false,
-                                            automaticLayout: true,
-                                            lineNumbers: 'on',
-                                            padding: { top: 10, bottom: 10 }
-                                        }}
+                                <div className="blog-editor-shell">
+                                    <TipTapEditorWrapper
+                                        blog={currentBlog}
+                                        onSave={handleBlogSave}
+                                        onCancel={handleBlogCancel}
+                                        theme="light"
                                     />
                                 </div>
-                            </div>
+                            )
+                        )}
 
-                            <div className="editor-section">
-                                <div className="editor-header">
-                                    <span className="editor-title">Data</span>
-                                    <span className={`editor-mode ${method}`}>{method === 'GET' ? 'Read Only' : 'Editable'}</span>
+                        {activeTab === 'Configuration' && (
+                            <div className="config-shell">
+                                <div className="config-controls">
+                                    <div className="method-toggle">
+                                        <button onClick={() => setMethod('GET')} className={method === 'GET' ? 'active' : ''}>GET</button>
+                                        <button onClick={() => setMethod('POST')} className={method === 'POST' ? 'active' : ''}>POST</button>
+                                    </div>
+                                    <div className="config-actions">
+                                        <button onClick={() => method === 'GET' ? handleSubmit() : setShowModal('update')} className="action-btn primary">
+                                            {method === 'GET' ? 'Fetch' : 'Update'}
+                                        </button>
+                                        <button onClick={() => setShowModal('restore')} className="action-btn danger">Reset</button>
+                                    </div>
                                 </div>
-                                <div className="editor-wrapper main">
-                                    <Editor
-                                        height="100%"
-                                        defaultLanguage="json"
-                                        value={editorValue}
-                                        onChange={setEditorValue}
-                                        theme="vs-dark"
-                                        options={{
-                                            minimap: { enabled: false },
-                                            fontSize: 13,
-                                            readOnly: method === 'GET',
-                                            scrollBeyondLastLine: false,
-                                            automaticLayout: true,
-                                            padding: { top: 10, bottom: 10 }
-                                        }}
-                                    />
+
+                                {status.message && (
+                                    <div className={`status-message ${status.type}`}>{status.message}</div>
+                                )}
+
+                                <div className="config-grid">
+                                    <div className="editor-section">
+                                        <div className="editor-header">
+                                            <span className="editor-title">Filter</span>
+                                        </div>
+                                        <div className="editor-wrapper filter">
+                                            {!filterValue?.trim() && (
+                                                <div className="filter-placeholder">
+                                                    {'{ "documentType": "skill" }'}
+                                                </div>
+                                            )}
+                                            <Editor
+                                                height="100%"
+                                                defaultLanguage="json"
+                                                value={filterValue}
+                                                onChange={(value) => setFilterValue(value ?? '')}
+                                                theme="light"
+                                                options={{
+                                                    minimap: { enabled: false },
+                                                    fontSize: 13,
+                                                    scrollBeyondLastLine: false,
+                                                    automaticLayout: true,
+                                                    lineNumbers: 'on',
+                                                    padding: { top: 12, bottom: 12 },
+                                                    wordWrap: 'on',
+                                                    renderLineHighlight: 'line',
+                                                    lineDecorationsWidth: 6,
+                                                    lineNumbersMinChars: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="editor-section">
+                                        <div className="editor-header">
+                                            <span className="editor-title">Data</span>
+                                            <span className={`editor-mode ${method}`}>{method === 'GET' ? 'Read Only' : 'Editable'}</span>
+                                        </div>
+                                        <div className="editor-wrapper main">
+                                            <Editor
+                                                height="100%"
+                                                defaultLanguage="json"
+                                                value={editorValue}
+                                                onChange={(value) => setEditorValue(value ?? '')}
+                                                theme="light"
+                                                options={{
+                                                    minimap: { enabled: false },
+                                                    fontSize: 13,
+                                                    readOnly: method === 'GET',
+                                                    scrollBeyondLastLine: false,
+                                                    automaticLayout: true,
+                                                    padding: { top: 10, bottom: 10 }
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {activeTab === 'Settings' && (
-                        <div className="placeholder">
-                            <p>Settings coming soon...</p>
-                        </div>
-                    )}
+                        {activeTab === 'Settings' && (
+                            <div className="placeholder panel">
+                                <p>Settings coming soon...</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </main>
 
@@ -389,9 +412,21 @@ export default function AdminDashboard() {
                 .topbar {
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     gap: 1rem;
                     padding: 1rem 1.5rem;
                     border-bottom: 1px solid var(--color-border);
+                    position: sticky;
+                    top: 0;
+                    background-color: var(--color-surface);
+                    z-index: 10;
+                    backdrop-filter: blur(6px);
+                }
+
+                .topbar-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.85rem;
                 }
 
                 .menu-btn {
@@ -405,15 +440,53 @@ export default function AdminDashboard() {
                     font-weight: 600;
                 }
 
+                .eyebrow {
+                    font-size: 0.75rem;
+                    color: var(--color-text-muted);
+                    margin: 0 0 2px 0;
+                    letter-spacing: 0.02em;
+                    text-transform: uppercase;
+                }
+
                 .content {
                     flex: 1;
                     padding: 1.5rem;
                     overflow-y: auto;
                 }
 
+                .content-shell {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                }
+
+                .panel {
+                    background: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    padding: 1.25rem;
+                    box-shadow: 0 18px 50px rgba(0,0,0,0.04);
+                }
+
+                .blog-list-shell {
+                    background: #fff;
+                    padding: 0.5rem 0;
+                    border-radius: var(--radius-md);
+                }
+
+                .blog-editor-shell {
+                    background: transparent;
+                }
+
+                .blog-editor-shell {
+                    background: transparent;
+                }
+
                 .stats-grid {
                     display: grid;
-                    grid-template-columns: repeat(3, 1fr);
+                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                     gap: 1rem;
                     margin-bottom: 1.5rem;
                 }
@@ -423,6 +496,10 @@ export default function AdminDashboard() {
                     background-color: var(--color-surface);
                     border: 1px solid var(--color-border);
                     border-radius: var(--radius-md);
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.04);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.35rem;
                 }
 
                 .stat-label {
@@ -442,6 +519,20 @@ export default function AdminDashboard() {
                     background-color: var(--color-surface);
                     border: 1px solid var(--color-border);
                     border-radius: var(--radius-md);
+                    box-shadow: 0 18px 50px rgba(0,0,0,0.04);
+                }
+
+                .section-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 0.75rem;
+                    margin-bottom: 0.75rem;
+                }
+
+                .section-hint {
+                    font-size: 0.8125rem;
+                    color: var(--color-text-muted);
                 }
 
                 .recent-activity h3 {
@@ -480,10 +571,14 @@ export default function AdminDashboard() {
                     color: var(--color-text-muted);
                 }
 
-                .config {
+                .config-shell {
                     display: flex;
                     flex-direction: column;
                     gap: 1rem;
+                    padding: 0;
+                    background: transparent;
+                    border: none;
+                    box-shadow: none;
                 }
 
                 .config-controls {
@@ -495,23 +590,24 @@ export default function AdminDashboard() {
 
                 .method-toggle {
                     display: flex;
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-sm);
+                    border: 1px solid #e2e8f0;
+                    border-radius: 10px;
                     overflow: hidden;
+                    background: #f8fafc;
                 }
 
                 .method-toggle button {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                    background-color: var(--color-surface);
-                    color: var(--color-text-secondary);
+                    padding: 0.6rem 1.2rem;
+                    font-size: 0.78rem;
+                    font-weight: 600;
+                    background-color: transparent;
+                    color: #475569;
                     transition: all var(--transition-fast);
                 }
 
                 .method-toggle button.active {
-                    background-color: var(--color-accent);
-                    color: var(--color-bg);
+                    background-color: #0f172a;
+                    color: #fff;
                 }
 
                 .config-actions {
@@ -521,33 +617,36 @@ export default function AdminDashboard() {
                 }
 
                 .action-btn {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                    border-radius: var(--radius-sm);
-                    transition: opacity var(--transition-fast);
+                    padding: 0.6rem 1.1rem;
+                    font-size: 0.82rem;
+                    font-weight: 600;
+                    border-radius: 10px;
+                    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+                    border: 1px solid transparent;
                 }
 
                 .action-btn.primary {
-                    background-color: var(--color-accent);
-                    color: var(--color-bg);
+                    background-color: #0f172a;
+                    color: #fff;
+                    box-shadow: 0 10px 30px rgba(15,23,42,0.18);
                 }
 
                 .action-btn.danger {
-                    background-color: transparent;
+                    background-color: #fff;
                     border: 1px solid #fecaca;
                     color: #ef4444;
                 }
 
                 .status-message {
                     padding: 0.625rem 0.875rem;
-                    border-radius: var(--radius-sm);
-                    font-size: 0.8125rem;
+                    border-radius: 10px;
+                    font-size: 0.85rem;
+                    border: 1px solid transparent;
                 }
 
                 .status-message.success {
-                    background-color: #f0fdf4;
-                    color: #16a34a;
+                    background-color: #ecfdf3;
+                    color: #15803d;
                     border: 1px solid #bbf7d0;
                 }
 
@@ -563,32 +662,43 @@ export default function AdminDashboard() {
                     border: 1px solid #bfdbfe;
                 }
 
+                .config-grid {
+                    display: grid;
+                    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+                    gap: 1rem;
+                    align-items: start;
+                }
+
                 .editor-section {
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
+                    border: 1px solid #e2e8f0;
+                    border-radius: 14px;
                     overflow: hidden;
+                    background: #fff;
+                    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
                 }
 
                 .editor-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    padding: 0.5rem 0.75rem;
-                    background-color: #1e1e1e;
-                    border-bottom: 1px solid #333;
+                    padding: 0.65rem 0.9rem;
+                    background-color: #f8fafc;
+                    border-bottom: 1px solid #e2e8f0;
                 }
 
                 .editor-title {
-                    font-size: 0.75rem;
-                    color: #9ca3af;
-                    font-family: monospace;
+                    font-size: 0.8rem;
+                    color: #475569;
+                    font-family: 'SF Mono', Menlo, monospace;
                 }
 
                 .editor-mode {
                     font-size: 0.625rem;
                     padding: 0.125rem 0.375rem;
-                    border-radius: 3px;
+                    border-radius: 6px;
                     text-transform: uppercase;
+                    border: 1px solid #e2e8f0;
+                    background: #fff;
                 }
 
                 .editor-mode.GET {
@@ -602,12 +712,29 @@ export default function AdminDashboard() {
                 }
 
                 .editor-wrapper.filter {
-                    height: 100px;
+                    position: relative;
+                    height: clamp(220px, 26vh, 320px);
+                    min-height: 220px;
+                    background: #f8fafc;
+                    border-top: 1px solid #e2e8f0;
+                }
+
+                .filter-placeholder {
+                    position: absolute;
+                    top: 10px;
+                    left: 12px;
+                    color: #94a3b8;
+                    font-size: 0.85rem;
+                    font-family: 'SF Mono', Menlo, monospace;
+                    pointer-events: none;
+                    z-index: 1;
                 }
 
                 .editor-wrapper.main {
-                    height: calc(100vh - 420px);
-                    min-height: 250px;
+                    height: clamp(320px, 60vh, 760px);
+                    min-height: 280px;
+                    background: #fff;
+                    border-top: 1px solid #e2e8f0;
                 }
 
                 .placeholder {
@@ -699,12 +826,26 @@ export default function AdminDashboard() {
                         display: block;
                     }
 
-                    .stats-grid {
-                        grid-template-columns: 1fr 1fr;
+                    .topbar {
+                        flex-wrap: wrap;
+                    }
+
+                    .content {
+                        padding: 1rem;
+                    }
+
+                    .config-actions {
+                        margin-left: 0;
+                        width: 100%;
+                        justify-content: flex-start;
+                    }
+
+                    .config-grid {
+                        grid-template-columns: 1fr;
                     }
 
                     .editor-wrapper.main {
-                        height: 300px;
+                        height: 320px;
                     }
                 }
 
